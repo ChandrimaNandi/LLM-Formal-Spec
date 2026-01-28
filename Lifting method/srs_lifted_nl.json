@@ -1,0 +1,452 @@
+[
+  {
+    "Source_NL": "A user belonging to a higher privilege level is allowed to invite any individual to sign up at a lower privilege level.",
+    "Lifted_NL": "always (user u's privilege level > privilege level p) implies (u has permission to invite an individual to sign up with privilege level p)",
+    "section_id": "page_8"
+  },
+  {
+    "Source_NL": "Likewise, user belonging to a a higher privilege level is allowed to delete any account at a lower privilege level if required.",
+    "Lifted_NL": "always (user u's privilege level > account a's privilege level) implies (u has permission to delete account a)",
+    "section_id": "page_8"
+  },
+  {
+    "Source_NL": "A customer’s primary role is to raise complaints as required.",
+    "Lifted_NL": "always a customer has the capability to raise a complaint",
+    "section_id": "page_9"
+  },
+  {
+    "Source_NL": "At various stages of processing a complaint, a customer would need to perform various actions like:\n• select a plumber as suggested by the system or ask for more suggestions\n• select a time slot as suggested by the system or ask for more suggestions\n• approve or reject a quotation as raised by a plumber\n• give feedback on the processing of a complaint\n• make necessary payments",
+    "Lifted_NL": "always when a complaint is being processed, the associated customer has permissions to [select plumber, ask for more plumber suggestions, select time slot, ask for more time slot suggestions, approve quotation, reject quotation, give feedback, make payment]",
+    "section_id": "page_9"
+  },
+  {
+    "Source_NL": "Sign-up and sign-in are necessary prerequisite use cases for performing any other actions.",
+    "Lifted_NL": "always (user u attempts to perform action a AND a is not sign-up AND a is not sign-in) implies (u must be signed in)",
+    "section_id": "page_9"
+  },
+  {
+    "Source_NL": "A plumber would be able to view all complaints assigned to him so far.",
+    "Lifted_NL": "always a plumber p has permission to view a complaint c if c is assigned to p",
+    "section_id": "page_10"
+  },
+  {
+    "Source_NL": "The plumber can respond to active complaints assigned to him.",
+    "Lifted_NL": "always a plumber p has permission to respond to a complaint c if c's status is active AND c is assigned to p",
+    "section_id": "page_10"
+  },
+  {
+    "Source_NL": "He can order spares from the company warehouse.",
+    "Lifted_NL": "always a plumber p has permission to order spares from the company warehouse",
+    "section_id": "page_10"
+  },
+  {
+    "Source_NL": "He can communicate with the customer and seek his approval to use any spares required for a repair job.",
+    "Lifted_NL": "always a plumber p has permission to communicate with a customer c AND seek c's approval to use spares for a repair job",
+    "section_id": "page_10"
+  },
+  {
+    "Source_NL": "He would be allowed to check out spares only if the customer has consented to pay for the spares/components.",
+    "Lifted_NL": "always (a plumber p attempts to check out spares) implies (the associated customer c has consented to pay for the spares)",
+    "section_id": "page_10"
+  },
+  {
+    "Source_NL": "A plumber must sign up as a plumber before he can avail the features of the applications.",
+    "Lifted_NL": "always (user u attempts to avail plumber features) implies (u must have signed up as a plumber)",
+    "section_id": "page_10"
+  },
+  {
+    "Source_NL": "While signing up, a plumber mentions his specialties on the system along with other details.",
+    "Lifted_NL": "when a user u signs up as a plumber, u must provide specialties AND other details",
+    "section_id": "page_10"
+  },
+  {
+    "Source_NL": "Once signed up, the plumber would go through an examination/verification.",
+    "Lifted_NL": "eventually after a user u signs up as a plumber, u's status becomes pending verification",
+    "section_id": "page_10"
+  },
+  {
+    "Source_NL": "If found suitable, the plumber would be inducted to the fleet of plumbers by the service manager.",
+    "Lifted_NL": "always if a plumber p's verification result is suitable, then a service manager inducts p AND p's status becomes active",
+    "section_id": "page_10"
+  },
+  {
+    "Source_NL": "Otherwise, the plumber may either be sent for an upskilling training programme or may be rejected.",
+    "Lifted_NL": "always if a plumber p's verification result is not suitable, then (p's status becomes requires training OR p's status becomes rejected)",
+    "section_id": "page_10"
+  },
+  {
+    "Source_NL": "A dismissed plumber will be allowed to re-apply on meeting certain conditions as defined by the organisation.",
+    "Lifted_NL": "always a plumber p with status dismissed has permission to re-apply if p meets organisation-defined conditions",
+    "section_id": "page_10"
+  },
+  {
+    "Source_NL": "Plumber sees a new complaint assigned to him.",
+    "Lifted_NL": "when a new complaint c is assigned to a plumber p, eventually p is notified of c",
+    "section_id": "page_10"
+  },
+  {
+    "Source_NL": "Customer gets notified about the plumber details.",
+    "Lifted_NL": "when a plumber p is assigned to a complaint c, eventually the customer associated with c is notified of p's details",
+    "section_id": "page_11"
+  },
+  {
+    "Source_NL": "System looks at the earliest available slots with the given plumber and shares with a list of suggested visit slots with the customer.",
+    "Lifted_NL": "when a plumber p is assigned to a complaint c, the system eventually suggests a list of earliest available visit slots for p to the customer of c",
+    "section_id": "page_11"
+  },
+  {
+    "Source_NL": "Customer selects a visit slot from among the provided slots.",
+    "Lifted_NL": "eventually the customer c selects a visit slot s where s is in the list of system-suggested slots",
+    "section_id": "page_11"
+  },
+  {
+    "Source_NL": "In case the customer doesn’t find any of the suggested slots suitable, the system has to suggest more slots.",
+    "Lifted_NL": "when a customer c rejects all suggested visit slots for a complaint, the system must eventually suggest a new list of visit slots",
+    "section_id": "page_11"
+  },
+  {
+    "Source_NL": "In such cases, other plumbers should be considered.",
+    "Lifted_NL": "when the system suggests a new list of visit slots, the new list may be based on plumbers other than the originally assigned plumber",
+    "section_id": "page_11"
+  },
+  {
+    "Source_NL": "The need to provide these details should be optional.",
+    "Lifted_NL": "always providing non-essential details is optional",
+    "section_id": "page_11"
+  },
+  {
+    "Source_NL": "It should be possible for the customer to go ahead with the complaint raising with/without providing any piece of information that the system solicits.",
+    "Lifted_NL": "always a customer c has permission to raise a complaint even if optional solicited information is not provided",
+    "section_id": "page_11"
+  },
+  {
+    "Source_NL": "The system algorithmically does the plumber and time allocation based on the information provided by the customer.",
+    "Lifted_NL": "the system performs plumber and time allocation for a complaint based on customer-provided information",
+    "section_id": "page_11"
+  },
+  {
+    "Source_NL": "Hence, a quotation and payment can be done right up front at the time of raising the complaint.",
+    "Lifted_NL": "always it is possible for a quotation to be generated AND payment to be made when a complaint is raised",
+    "section_id": "page_11"
+  },
+  {
+    "Source_NL": "Hence, the final charges of a repair/maintenance work can be determined only after the completion of the task.",
+    "Lifted_NL": "always the final charges for a repair work are determined only after the task's status becomes completed",
+    "section_id": "page_11"
+  },
+  {
+    "Source_NL": "Pricing will be different for these two categories.",
+    "Lifted_NL": "always the pricing for warranty service is different from the pricing for out-of-warranty service",
+    "section_id": "page_11"
+  },
+  {
+    "Source_NL": "Existing customers (who are availing service for equipments under warranty) will not be charged for visit.",
+    "Lifted_NL": "always if a customer c is an existing customer AND is availing service for equipment under warranty, then c is not charged a visit fee",
+    "section_id": "page_11"
+  },
+  {
+    "Source_NL": "For outside customers, visiting charges will be mandatory.",
+    "Lifted_NL": "always if a customer c is an outside customer, then c must be charged a visit fee",
+    "section_id": "page_11"
+  },
+  {
+    "Source_NL": "If the spare parts costs are deemed too high by the customer, and he wants not to go ahead with the service, the ticket will be closed as satisfactory.",
+    "Lifted_NL": "always if a customer c rejects the service due to high spare parts cost, then the associated complaint's status becomes closed-satisfactory",
+    "section_id": "page_11"
+  },
+  {
+    "Source_NL": "No wallet option provided.",
+    "Lifted_NL": "the system does not provide a wallet feature",
+    "section_id": "page_11"
+  },
+  {
+    "Source_NL": "Charges will be decided based on various rules (e.g. location etc.)",
+    "Lifted_NL": "the system calculates charges for a service based on a set of rules which include parameters like location",
+    "section_id": "page_11"
+  },
+  {
+    "Source_NL": "The service department will have an interface which will be used to define these rates.",
+    "Lifted_NL": "always the service department has permission to define service rates via a system interface",
+    "section_id": "page_11"
+  },
+  {
+    "Source_NL": "Any user (except super user) would have to sign up to become part of the system.",
+    "Lifted_NL": "always for any user u, if u is not a super user, u must sign up to use the system",
+    "section_id": "page_13"
+  },
+  {
+    "Source_NL": "At the time of sign up, a user would need to choose a role (e.g. customer, plumber or service manager).",
+    "Lifted_NL": "when a user u signs up, u must select a role from the set [customer, plumber, service manager]",
+    "section_id": "page_13"
+  },
+  {
+    "Source_NL": "Personal details like email ID and phone number will be collected at the time of sign up.",
+    "Lifted_NL": "when a user u signs up, u must provide an email ID AND a phone number",
+    "section_id": "page_13"
+  },
+  {
+    "Source_NL": "Hence, the system will mandate that, for a particular role, the personal details should be distinct.",
+    "Lifted_NL": "always for any given role r, the personal details (email, phone number) for all users with role r must be unique",
+    "section_id": "page_13"
+  },
+  {
+    "Source_NL": "However, it is fine for the same individual to hold multiple accounts with maximum one account in each user category (customer, plumber and service manager).",
+    "Lifted_NL": "always an individual i is permitted to have multiple user accounts, provided that i has at most one account for each role in [customer, plumber, service manager]",
+    "section_id": "page_13"
+  },
+  {
+    "Source_NL": "A customer can sign up directly without any verification.",
+    "Lifted_NL": "when a user u signs up with the customer role, u's account status immediately becomes active",
+    "section_id": "page_13"
+  },
+  {
+    "Source_NL": "A plumber can sign up directly without any verification.",
+    "Lifted_NL": "when a user u signs up with the plumber role, u's account is created with status unverified",
+    "section_id": "page_13"
+  },
+  {
+    "Source_NL": "However, to become active, he would need to undergo certain verification and/or training based on his current skill level and what is expected in the role he is seeking.",
+    "Lifted_NL": "always for a plumber p's status to become active, p must have successfully completed verification and/or training",
+    "section_id": "page_13"
+  },
+  {
+    "Source_NL": "A user can sign in/login using his/her credentials.",
+    "Lifted_NL": "always a user u has permission to attempt to sign in by providing credentials",
+    "section_id": "page_13"
+  },
+  {
+    "Source_NL": "If the user forgets his/her credentials, the system will provide appropriate help to reset the password etc.",
+    "Lifted_NL": "the system provides a feature for a user u to reset their password if they have forgotten their credentials",
+    "section_id": "page_13"
+  },
+  {
+    "Source_NL": "At the time of sign in the user must mention which user role he/she wishes to sign in as.",
+    "Lifted_NL": "when a user u attempts to sign in, u must specify a role to sign in as",
+    "section_id": "page_13"
+  },
+  {
+    "Source_NL": "For the sign in to succeed, the user must have an account in that role.",
+    "Lifted_NL": "always a sign-in attempt by user u with role r succeeds only if u has an account with role r",
+    "section_id": "page_13"
+  },
+  {
+    "Source_NL": "If the user wishes to change his role, he would have to logout and login again with a different role.",
+    "Lifted_NL": "always to change the current active role, a user u must first logout and then sign in again selecting the new role",
+    "section_id": "page_13"
+  },
+  {
+    "Source_NL": "• Raised: This is the state of the complaint immediately after it has been raised.",
+    "Lifted_NL": "when a complaint c is created, its initial state is Raised",
+    "section_id": "page_13"
+  },
+  {
+    "Source_NL": "• Assigned: A raised complaint is assigned to a plumber, either manually by the service or algorithmically by the system, taking it to Assigned state.",
+    "Lifted_NL": "when a complaint c with state Raised is assigned to a plumber, its state transitions to Assigned",
+    "section_id": "page_13"
+  },
+  {
+    "Source_NL": "• Under examination: When a plumber visits the customer site, his first action is to report the visit.",
+    "Lifted_NL": "when a plumber p reports visiting the customer site for a complaint c, c's state transitions to Under examination",
+    "section_id": "page_14"
+  },
+  {
+    "Source_NL": "This marks the examination to be ON, and the complaint moves to under examination state.",
+    "Lifted_NL": "always when an event marks an examination ON, then the corresponding complaint's state becomes 'under examination'",
+    "section_id": "page_14"
+  },
+  {
+    "Source_NL": "• Quotation raised: After examination, the plumber examines the issue and generates an estimate or quotation of the approximate expenditure.",
+    "Lifted_NL": "always when a complaint c is in state 'examination complete', then a plumber p can examine c's issue and generate a quotation q, which causes c's state to become 'quotation raised'",
+    "section_id": "page_14"
+  },
+  {
+    "Source_NL": "This needs to be approved by the customer before the service can proceed further.",
+    "Lifted_NL": "always a service s for a complaint c can proceed only if the customer for c has approved the quotation for c",
+    "section_id": "page_14"
+  },
+  {
+    "Source_NL": "• Under execution: Once the customer approves the quotation, the plumber starts working on the issue.",
+    "Lifted_NL": "always when a customer approves a quotation for a complaint c, then the plumber starts working on c's issue AND c's state becomes 'under execution'",
+    "section_id": "page_14"
+  },
+  {
+    "Source_NL": "• Task completed: Once the task is completed to the satisfaction of the plumber, he marks it as completed.",
+    "Lifted_NL": "always when a plumber p is satisfied that the task for a complaint c is complete, then p can mark c as 'task completed'",
+    "section_id": "page_14"
+  },
+  {
+    "Source_NL": "The customer’s feedback + acceptance is solicited by the system.",
+    "Lifted_NL": "always when a complaint c's state is 'task completed', then the system solicits feedback and acceptance from the customer for c",
+    "section_id": "page_14"
+  },
+  {
+    "Source_NL": "If the customer finds the service not up to his/her satisfaction he/she may reject it.",
+    "Lifted_NL": "always if a customer c is not satisfied with a service s, then c can reject s",
+    "section_id": "page_14"
+  },
+  {
+    "Source_NL": "This takes the issue back to the raised state.",
+    "Lifted_NL": "always when a customer rejects a service for a complaint c, then c's state becomes 'raised'",
+    "section_id": "page_14"
+  },
+  {
+    "Source_NL": "Alternatively, the customer may go ahead and accept/approve the solution.",
+    "Lifted_NL": "always a customer c can accept the solution for a complaint co",
+    "section_id": "page_14"
+  },
+  {
+    "Source_NL": "This takes the complaint to payment pending state.",
+    "Lifted_NL": "always when a customer accepts the solution for a complaint c, then c's state becomes 'payment pending'",
+    "section_id": "page_14"
+  },
+  {
+    "Source_NL": "• Payment completed: In payment pending state, the customer is required to pay up the expenses for the service.",
+    "Lifted_NL": "always if a complaint c's state is 'payment pending', then the customer for c must pay the expenses for the service",
+    "section_id": "page_14"
+  },
+  {
+    "Source_NL": "• Done: Once payment is done, the complaint reaches its logical conclusion.",
+    "Lifted_NL": "always when a complaint c's state is 'payment completed', then c's state becomes 'done'",
+    "section_id": "page_14"
+  },
+  {
+    "Source_NL": "• Abandoned: When the quotation is raised, the customer may find it unaffordable and reject it.",
+    "Lifted_NL": "always if a complaint c's state is 'quotation raised', then the customer for c can reject the quotation for c",
+    "section_id": "page_14"
+  },
+  {
+    "Source_NL": "This will take the complaint to the abandoned state.",
+    "Lifted_NL": "always when a customer rejects a quotation for a complaint c, then c's state becomes 'abandoned'",
+    "section_id": "page_14"
+  },
+  {
+    "Source_NL": "• Cancelled: Before the plumber starts executing a particular task, the customer has the freedom to cancel the complaint.",
+    "Lifted_NL": "always if a complaint c's state is not 'under execution', then the customer for c can cancel c",
+    "section_id": "page_14"
+  },
+  {
+    "Source_NL": "If so done, the complaint reaches a cancelled state.",
+    "Lifted_NL": "always when a customer cancels a complaint c, then c's state becomes 'cancelled'",
+    "section_id": "page_14"
+  },
+  {
+    "Source_NL": "The ovals enclosed within dotted boxes are those for which the Con-do-it application must have additional features.",
+    "Lifted_NL": "always the application must have additional features for items represented by ovals in dotted boxes",
+    "section_id": "page_15"
+  },
+  {
+    "Source_NL": "Customer purchase is beyond the purview of the application.",
+    "Lifted_NL": "always customer purchase is outside the scope of the application",
+    "section_id": "page_15"
+  },
+  {
+    "Source_NL": "If a spare part/component required for a specific service is not available immediately, it would have to be procured.",
+    "Lifted_NL": "always if a spare part p is required for a service s AND p is not available, then p must be procured",
+    "section_id": "page_15"
+  },
+  {
+    "Source_NL": "In this condition, the plumber can order these from the company stores after taking approval from the customer.",
+    "Lifted_NL": "always a plumber p can order a spare part sp from company stores only if the customer has approved the order for sp",
+    "section_id": "page_15"
+  },
+  {
+    "Source_NL": "In such case, the corresponding cost will automatically get added to the invoice.",
+    "Lifted_NL": "always when a plumber orders a spare part sp from company stores, then the cost of sp is automatically added to the invoice",
+    "section_id": "page_15"
+  },
+  {
+    "Source_NL": "The other option is that the plumber purchases it on his own, and raises a reimbursement request to the company.",
+    "Lifted_NL": "always a plumber p can purchase a spare part sp AND then raise a reimbursement request to the company for sp",
+    "section_id": "page_19"
+  },
+  {
+    "Source_NL": "The company, after ensuring that necessary approval from the customer has been obtained, releases the money.",
+    "Lifted_NL": "always a company c releases money for a reimbursement request r only if c has verified that the customer has approved the purchase for r",
+    "section_id": "page_19"
+  },
+  {
+    "Source_NL": "Another alternative could be to purchase the part through the company.",
+    "Lifted_NL": "always a spare part sp can be purchased through the company",
+    "section_id": "page_19"
+  },
+  {
+    "Source_NL": "In this case, the company verifies that necessary approval from the customer has been obtained, and then orders the part on behalf of the plumber.",
+    "Lifted_NL": "always when a part is purchased through the company, the company first verifies customer approval AND then orders the part on behalf of the plumber",
+    "section_id": "page_19"
+  },
+  {
+    "Source_NL": "Free of Cost (FOC): Plumber will seek approval from APPL Service manager by submitting the defect and purchase proof image > Plumber pick the product from nearest dealer or DP (Distributor Partner) on loan basis after approval > Defective Product or Spare will be submitted to APPL Service manager by plumber along with defect return challan generated from the system against the complaint > APPL Service manager will route the challan to APPL finance for Credit note1 > Finance will pay the amount to DP and mention the CN closure note in CRM.",
+    "Lifted_NL": "always for an FOC part, a plumber p seeks approval from a manager m by submitting proof, implies after approval p can pick up the part on loan, implies p must submit the defective part with a challan to m, implies m routes the challan to finance, implies finance pays the dealer and closes the credit note",
+    "section_id": "page_19"
+  },
+  {
+    "Source_NL": "Billing or Chargeable: Plumber will generate the quote from system or CRM along with the nearest dealer or DP name (Rate are predefined and fixed) > Get the quote approved from end customer > Reach out to nearest Dealer or DP for getting the necessary Product or Spare along with proper tax invoice > Collect the part charges from customer after replacing it > Submit the payment to Dealer or DP from where he/she took the material on loan basis.",
+    "Lifted_NL": "always for a chargeable part, a plumber p generates a quote, implies p gets the quote approved by the customer, implies p gets the part from a dealer, implies p collects payment from the customer after replacement, implies p pays the dealer",
+    "section_id": "page_19"
+  },
+  {
+    "Source_NL": "This process is applicable for non APPL brand product however the plumber will be incentivized only on sale of APPL product or spare against uploading of valid DP or dealer invoice.",
+    "Lifted_NL": "always the chargeable part process is applicable for non-APPL brand products AND a plumber p is incentivized for a sale only if the sale is of an APPL product and p uploads a valid invoice",
+    "section_id": "page_19"
+  },
+  {
+    "Source_NL": "When the plumber selects this option, the list of complaints will be shown to the plumber.",
+    "Lifted_NL": "always when a plumber p selects the 'view complaints' option, then the system shows the list of complaints to p",
+    "section_id": "page_22"
+  },
+  {
+    "Source_NL": "The complaints may be sorted as per different criteria, e.g. name of the customer, date of raising, date of acceptance, date of completion, state (e.g. raised, completed etc.)",
+    "Lifted_NL": "always the list of complaints can be sorted by criteria including customer name, date of raising, date of acceptance, date of completion, and state",
+    "section_id": "page_22"
+  },
+  {
+    "Source_NL": "When the plumber selects a particular complaint, what gets shown to him depends on the state of the complaint.",
+    "Lifted_NL": "always when a plumber p selects a complaint c, then the information displayed to p depends on the state of c",
+    "section_id": "page_22"
+  },
+  {
+    "Source_NL": "For example, if a complaint has already been accepted, there should be no option provided to accept/reject it.",
+    "Lifted_NL": "always if a complaint c's state is 'accepted', then the system must not show an 'accept/reject' option for c",
+    "section_id": "page_22"
+  },
+  {
+    "Source_NL": "If a complaint has been paused, the plumber should not be allowed to do anything in it unless it is resumed.",
+    "Lifted_NL": "always if a complaint c's state is 'paused', then a plumber p cannot perform any action on c until c's state becomes 'resumed'",
+    "section_id": "page_22"
+  },
+  {
+    "Source_NL": "A service manager would have the provision to either explicitly delicate the process to an algorithm, or execute it himself.",
+    "Lifted_NL": "always a service manager m can either delegate a process p to an algorithm or execute p manually",
+    "section_id": "page_22"
+  },
+  {
+    "Source_NL": "The service manager may then decide to manually produce a set of suggestions for the customer or invoke the algorithm to do it automatically.",
+    "Lifted_NL": "always a service manager m can either manually produce suggestions for a customer or invoke an algorithm to produce suggestions automatically",
+    "section_id": "page_22"
+  },
+  {
+    "Source_NL": "• RegisteredUsers = ( username *, contact, email, firstName, lastName, password )",
+    "Lifted_NL": "a RegisteredUser has a username as primary key, a contact, an email, a firstName, a lastName, and a password",
+    "section_id": "page_28"
+  },
+  {
+    "Source_NL": "• RegisteredPlumber = ( username *, acceptedComplaints array, complaints array, password, specialisations array )",
+    "Lifted_NL": "a RegisteredPlumber has a username as primary key, an array of acceptedComplaints, an array of complaints, a password, and an array of specialisations",
+    "section_id": "page_28"
+  },
+  {
+    "Source_NL": "• RegisteredManager = ( username *, password )",
+    "Lifted_NL": "a RegisteredManager has a username as primary key and a password",
+    "section_id": "page_28"
+  },
+  {
+    "Source_NL": "• RegisteredCustomer = ( username (primary key), complaints (array), contact, password )",
+    "Lifted_NL": "a RegisteredCustomer has a username as primary key, an array of complaints, a contact, and a password",
+    "section_id": "page_28"
+  },
+  {
+    "Source_NL": "• Complaints = ( complaintID *, billAmount, complaint, complaintCategory array, contact, paid, plumberUsername, purchaseCostHistory array, purchaseDetailsHistory array, purchaseTypeHistory array, status, username )",
+    "Lifted_NL": "a Complaint has a complaintID as primary key, a billAmount, a complaint description, an array of complaintCategory, a contact, a paid status, a plumberUsername, an array of purchaseCostHistory, an array of purchaseDetailsHistory, an array of purchaseTypeHistory, a status, and a username",
+    "section_id": "page_28"
+  }
+]

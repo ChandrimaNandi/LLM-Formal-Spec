@@ -1,0 +1,376 @@
+{
+  "sections": [
+    {
+      "id": "page_1",
+      "sentences": [
+        "Con-Do-It: An Prototype for Plumber Aggregration Platform\nSujit Kumar Chakrabarti, Amar Pratap Singh, Tejdeep Gutta, Pankaj Jadhav\nDecember 24, 2022"
+      ]
+    },
+    {
+      "id": "page_2",
+      "sentences": [
+        "Part I\nPreliminaries\n1"
+      ]
+    },
+    {
+      "id": "page_3",
+      "sentences": [
+        "Chapter 1\nIntroduction\n1.1\nPlumber Aggregation Platform\nA plumber aggregation platform is a web/mobile platform envisaged by APPL",
+        "Some of the important\nfeatures of the platform are as follows:\n• Customers connect to plumbers who are located close to them and avail their services.\n• Complaint management and processing\n• Payment processing\n• Plumber management\n• Inventory management\n1.2\nCon-Do-It\nCon-Do-It is a prototype for the plumber aggregation platform",
+        "It is meant to help elicit the requirements\nof an actual product of a similar description that would be developed by APPL (likely in partnership\nwith a professional software development firm)",
+        "Con-Do-It aims to aid requirement elicitation and design\nof the aggregrator platform",
+        "Its explicitly excludes, as one of its goals, evolving into an actual product\nas development of such a product will require skills and resources of a professional software development\ncompany, both in terms of development and operations.\n1.3\nThis Document\nThis document reports all the work that has been done in IIITB in the period August 2022 through December\n2022 in the development of the Con-Do-It prototype",
+        "This includes requirement modelling, design, user\ninstructions, test design along with thoughts on the further roadmap to the development of the plumber\naggregator platform.\nThe goal of this document – along with the prototype – is to act as an introductory reference in the\ninitial stages of the development of the Plumber Aggregator Platform",
+        "We have tried our best to push the\nlevel of details as close as possible as would be sufficient to develop a full-fledged application",
+        "However, it\nactually is not quite at that level",
+        "The business and deployment conditions in real-time are likely to be very\ndynamic and impossible to predict that this stage",
+        "Hence, beyond a particular level of detail, our models\nmay drift away from the reality",
+        "We believe that further details should be worked out as a part of an agile\nsoftware development process for the aggregator platform.\n2"
+      ]
+    },
+    {
+      "id": "page_4",
+      "sentences": [
+        "1.3.1\nIntended Audience\nThis document is written for the benefit of software development team(s) who undertake the final develop-\nment of the Plumber Aggregator Platform.\n3"
+      ]
+    },
+    {
+      "id": "page_5",
+      "sentences": [
+        "Chapter 2\nPlan\n2.1\nProject Deliverables\nThe project deliverables are as follows:\n1",
+        "A list of requirement features, their elaboration as use cases, scenarios and other appropriate forms as\nappropriate\n2",
+        "Analysis of requirements in terms of their relative importance/priority, interaction and dependence\n3",
+        "Analysis of non-functional requirements\n4",
+        "Working prototype implemented and piloted in consultation with APPL.\n2.2\nKey Features\n1",
+        "Location and rating based plumber allocation algorithm\n2",
+        "Call Tracking and Status update\n3",
+        "Rating mechanism for Plumber and the customer and other algorithms that are required for the solution\n4",
+        "Pricing, Invoicing process and payment option\n5",
+        "Plumber reimbursements\n6",
+        "Knowledge bank (Link to technical contents)\n7",
+        "Gamification to keep users engaged on the platform\n8",
+        "Omni Channel capability for Consumer to raise a support request",
+        "etc\n2.3\nPlan\nPI will devote approximately half a day (3 hours) of work every week on the project",
+        "This will include an hour\nof discussion with the project students",
+        "Two students of 3rd Year iMTech will devote approximately one day\nper person of work to the project",
+        "This will involve software development, team interaction, documentation,\nresearch and any other project related activities as necessary.\nThe team will meet at least once every week for update and weekly planning and technical discussion.\nAPPL personnel will join these meetings every alternate week for brainstorming and feedback.\n4"
+      ]
+    },
+    {
+      "id": "page_6",
+      "sentences": [
+        "2.3.1\nTimeline\nAn iterative prototype driven approach will be followed to execute the project",
+        "The deliverables and their\nexpected timelines are as follows:\nDeliverable\nDate\nInitialisation\nRequirement features List\nAugust 29, 2022\nIteration 1\nRequirement analysis (v1)\nSeptember 05, 2022\nPrototype design (storyboard)\nSeptember 12, 2022\nPrototype implementation (v1)\nSeptember 26, 2022\nPilot (v1)\nOctober 03, 2022\nIteration 2\nFeedback and requirement analysis\nOctober 10, 2022\nPrototype design and implementation\nOctober 24, 2022\nIteration 3\nFeedback and requirement analysis\nOctober 31, 2022\nPrototype design and implementation\nNovember 7, 2022\nRamp down\nRequirement Analysis Document\nNovember 14, 2022\nArchitectural Design Document\nNovember 21, 2022\nBuffer\n5"
+      ]
+    },
+    {
+      "id": "page_7",
+      "sentences": [
+        "Part II\nRequirement Analysis\n6"
+      ]
+    },
+    {
+      "id": "page_8",
+      "sentences": [
+        "Chapter 3\nRequirements\n3.1\nStakeholders\n1",
+        "APPL\n2",
+        "User: Customer\n3",
+        "User: Plumber\n4",
+        "User: Service manager/officer\n5",
+        "User: Super user\n6",
+        "Suppliers\nThe various user roles/categories are designated different privilege levels in ascending order as follows:\n1",
+        "Level 1: Customer and plumber\n2",
+        "Level 2: Service manager\n3",
+        "Level 3: Super user\nA user belonging to a higher privilege level is allowed to invite any individual to sign up at a lower\nprivilege level",
+        "Likewise, user belonging to a higher privilege level is allowed to delete any account at a lower\nprivilege level if required",
+        "More details about the sign up features are provided in Section 3.6.1.\n7"
+      ]
+    },
+    {
+      "id": "page_9",
+      "sentences": [
+        "3.2\nUser\nUser\nplumberID: string\naddress: string\nlocation: Location\nsignup()\nsignin()\nsignout()\ndelete()\nCustomer\nPlumber\nServiceManager\nSuperUser\nFigure 3.1: User class\n3.3\nCustomer\nCustomer\nraiseComplaint()\ncancelComplaint(complaintID: string)\nacceptAppointmentSuggestion(suggestion: Appointment)\nacceptQuotation(quotation: Quotation)\nrejectQuotation(quotation: Quotation)\nmakePayment(amount: Number, complaintID: string)\ngiveFeedback(complaintID: string)\nacceptSolution(complaintID: string)\nrejectSolution(complaintID: string)\nFigure 3.2: Customer class\nA customer’s primary role is to raise complaints as required",
+        "At various stages of processing a complaint, a\ncustomer would need to perform various actions like:\n• select a plumber as suggested by the system or ask for more suggestions\n• select a time slot as suggested by the system or ask for more suggestions\n• approve or reject a quotation as raised by a plumber\n• give feedback on the processing of a complaint\n• make necessary payments\nSign-up and sign-in are necessary prerequisite use cases for performing any other actions.\n8"
+      ]
+    },
+    {
+      "id": "page_10",
+      "sentences": [
+        "Init\nUnder\nExamination\nActive\nReferred to\nTraining\nUnder\nTraining\nRejected\nSuspended\nSign\nUp (P)\nqualify (P)\nsemi-qualify (P)\ndisqualify (P)\naccept\n(P)\nfailed (P)\nqualify (P)\nsuspend (M)\nreinstate (M)\n[reinstatement\nconditions hold]\nreject (M)\n[reinstatement\nconditions don’t hold]\nreapply (P)\n[re-application\nconditions hold]\ndelete (P)\nP\nPlumber\nM\nManager\nFigure 3.4: Plumber States\n3.4\nPlumber\nPlumber\nspecialisation: Set<ServiceType>\nacceptAssignment(complaintID: string)\nabandonComplaint(complaintID: string)\nraiseQuotation(quotation: Quotation)\nfillJobCard(jobcard: JobCard)\nFigure 3.3: Plumber class\nA plumber deals with installation and repair requests originating from customers or otherwise",
+        "A plumber\nwould be able to view all complaints assigned to him so far",
+        "The plumber can respond to active complaints\nassigned to him",
+        "He can order spares from the company warehouse",
+        "He can communicate with the customer\nand seek his approval to use any spares required for a repair job",
+        "He would be allowed to check out spares\nonly if the customer has consented to pay for the spares/components.\nA plumber must sign up as a plumber before he can avail the features of the applications",
+        "While signing\nup, a plumber mentions his specialties on the system along with other details",
+        "Once signed up, the plumber\nwould go through an examination/verification",
+        "If found suitable, the plumber would be inducted to the\nfleet of plumbers by the service manager.\nOtherwise, the plumber may either be sent for an upskilling\ntraining programme or may be rejected",
+        "There is a possibility of temporarily suspending a plumber due\nany organisational decision, or of removing/dismissing a plumber",
+        "A dismissed plumber will be allowed to\nre-apply on meeting certain conditions as defined by the organisation.\n3.4.1\nScenarios of Complaint Processing\n1",
+        "Plumber sees a new complaint assigned to him.\n2",
+        "Accepts\n9"
+      ]
+    },
+    {
+      "id": "page_11",
+      "sentences": [
+        "3",
+        "Customer gets notified about the plumber details.\n4",
+        "System looks at the earliest available slots with the given plumber and shares with a list of suggested\nvisit slots with the customer.\n5",
+        "Customer selects a visit slot from among the provided slots",
+        "In case the customer doesn’t find any of\nthe suggested slots suitable, the system has to suggest more slots",
+        "For example, if the job is deemed\nurgent by the customer then later slots may not work for him",
+        "In such cases, other plumbers should\nbe considered",
+        "On the other hand, if the customer is keen to be serviced by a particular plumber, and\nfor that, he doesn’t mind a later slot, such will be the suggestions made by the system.\nAt the time of raising a complaint, the customer may be asked to provide some helpful inputs, e.g.:\n• Preferred times\n• Plumber preference\n• Urgency\n• ...\nThe need to provide these details should be optional",
+        "It should be possible for the customer to go ahead\nwith the complaint raising with/without providing any piece of information that the system solicits",
+        "The\nsystem algorithmically does the plumber and time allocation based on the information provided by the\ncustomer.\nThere are two types of services provided:\n1",
+        "Installation service\n2",
+        "Repair and maintenance\nInstallation service involves components and procedures that are predictable",
+        "Hence, a quotation and\npayment can be done right up front at the time of raising the complaint",
+        "However, repair and maintenance\nwork may incur unforeseeable costs",
+        "Hence, the final charges of a repair/maintenance work can be determined\nonly after the completion of the task.\nRepair and maintenance can be done for two types of customers: existing customers and outside cus-\ntomers",
+        "Pricing will be different for these two categories",
+        "Existing customers (who are availing service for\nequipments under warranty) will not be charged for visit.\nFor outside customers, visiting charges will be mandatory.\nIf the spare parts costs are deemed too high by the customer, and he wants not to go ahead with the\nservice, the ticket will be closed as satisfactory.\nNo wallet option provided.\nCharges will be decided based on various rules (e.g",
+        "location etc.) for any service/component",
+        "The\nservice department will have an interface which will be used to define these rates.\n3.5\nUse Cases\n1",
+        "Raising of plumbing complaint\n2",
+        "Assignment of plumber to a complaint\n3",
+        "Tracking of complaint\n4",
+        "Closing of complaint\n5",
+        "Feedback on service\n6",
+        "Re-assignment of complaint\n10"
+      ]
+    },
+    {
+      "id": "page_12",
+      "sentences": [
+        "Figure 3.5: Use cases: Customer\nFigure 3.6: Use cases: Plumber\nFigure 3.7: Use cases: Service manager\n11"
+      ]
+    },
+    {
+      "id": "page_13",
+      "sentences": [
+        "3.6\nUser Accounts\n3.6.1\nSign Up\nAny user (except super user) would have to sign up to become part of the system",
+        "At the time of sign up,\na user would need to choose a role (e.g",
+        "customer, plumber or service manager)",
+        "The details of the sign up\nprocess will depend on the role chosen by the user.\nCommon Sign up Features\nPersonal details like email ID and phone number will be collected at the time of sign up",
+        "It is desirable that\nfor any given role, an individual should hold at most one account",
+        "Hence, the system will mandate that,\nfor a particular role, the personal details should be distinct",
+        "However, it is fine for the same individual to\nhold multiple accounts with maximum one account in each user category (customer, plumber and service\nmanager)",
+        "In extreme cases, the organisation may decide to remove an account in case of abuse, default or\nany other issue.\nCustomer Sign Up\nA customer can sign up directly without any verification.\nPlumber Sign Up\nA plumber can sign up directly without any verification",
+        "However, to become active, he would need to\nundergo certain verification and/or training based on his current skill level and what is expected in the role\nhe is seeking.\n3.6.2\nSign In\nA user can sign in/login using his/her credentials",
+        "Various options can be provided for sign in, e.g., password\nbased or OTP based or Google/Facebook based or multilevel signin (e.g",
+        "Online SBI)",
+        "If the user forgets\nhis/her credentials, the system will provide appropriate help to reset the password etc.\nAt the time of sign in the user must mention which user role he/she wishes to sign in as",
+        "For the sign in\nto succeed, the user must have an account in that role",
+        "If the user wishes to change his role, he would have\nto logout and login again with a different role.\n3.6.3\nAccount Deletion\nDue Clearance\nWhat do we do when a person with present dues tries to delete his account?\n3.7\nComplaint\nThe states of a complaint object may be described in more detail through additional states.\n• Initial: The initial state",
+        "This means that the complaint in question hasn’t yet been raised.\n• Raised: This is the state of the complaint immediately after it has been raised.\n• Assigned: A raised complaint is assigned to a plumber, either manually by the service or algorithmi-\ncally by the system, taking it to Assigned state.\n• Accepted: Once a plumber accepts a complaint\n12"
+      ]
+    },
+    {
+      "id": "page_14",
+      "sentences": [
+        "• Under examination: When a plumber visits the customer site, his first action is to report the visit.\nThis marks the examination to be ON, and the complaint moves to under examination state.\n• Quotation raised: After examination, the plumber examines the issue and generates an estimate\nor quotation of the approximate expenditure",
+        "This needs to be approved by the customer before the\nservice can proceed further",
+        "At this point, the complaint in in quotation raised state.\n• Under execution: Once the customer approves the quotation, the plumber starts working on the\nissue",
+        "The complaint is under execution.\n• Task completed: Once the task is completed to the satisfaction of the plumber, he marks it as\ncompleted",
+        "The customer’s feedback + acceptance is solicited by the system",
+        "If the customer finds the\nservice not up to his/her satisfaction he/she may reject it",
+        "This takes the issue back to the raised state.\nAlternatively, the customer may go ahead and accept/approve the solution",
+        "This takes the complaint\nto payment pending state.\n• Payment pending: The state the complaint is in when a task has been marked completed by the\nplumber and the same has been found acceptable by the customer.\n• Payment completed: In payment pending state, the customer is required to pay up the expenses\nfor the service",
+        "Once this is done, the complaint movesto the payment completed state.\n• Done: Once payment is done, the complaint reaches its logical conclusion",
+        "This is the done state.\n• Abandoned: When the quotation is raised, the customer may find it unaffordable and reject it",
+        "This\nwill take the complaint to the abandoned state.\n• Cancelled: Before the plumber starts executing a particular task, the customer has the freedom to\ncancel the complaint",
+        "If so done, the complaint reaches a cancelled state.\nThese states and their relation with each other have been presented in Fig",
+        "3.8.\nRaised\nCancelled\nAssigned\nAccepted\nUnder\nExamination\nQuotation\nRaised\nAbandoned\nPaused\nUnder\nExecution\nCompleted\nPayment\nPending\nDone\nraise(C)\ncancel(C)\nassign(M/S)\ncancel(C)\nassign(M)\nvisit(P)\nraise\nquotation(P)\nreject\nquotation(C)\naccept(C) [spares\nunavailable]\naccept(C) [spares\navailable]\nresume(P)\nexecuted(P)\nsolution\naccepted(C)\nsolution\nrejected(C)\npay(C)\nFigure 3.8: Complaint: State machine\n13"
+      ]
+    },
+    {
+      "id": "page_15",
+      "sentences": [
+        "Figure 3.9: Complaint resolution: Basic\nSolution Rejection and Pending Amount\nWe need to work out in more detail, what needs to be done when a customer rejects a solution that has\nalready incurred some expenditure",
+        "In some cases, the incurred expenses should carry over straight to\nthe next iteration of the solution",
+        "In certain cases, when the solution is proved to have altogether failed,\nthe expenses should be on the company and shouldn’t be forwarded to the next iteration",
+        "In some cases,\na partial amount may get waived",
+        "All these are matters of discretion requiring human intervention.\n3.8\nComplaint Resolution\n3.9\nComponent/Spare Part Procurement\nThe taxonomy of purchase mechanisms is presented pictorially in Figure 3.11",
+        "The ovals enclosed within\ndotted boxes are those for which the Con-do-it application must have additional features",
+        "Customer purchase\nis beyond the purview of the application.\n• Components available: If a spare part/component required for a specific service is not available\nimmediately, it would have to be procured",
+        "There are a number of ways in which a component may\nbe procured.\n• Available in company warehouse/store: In this condition, the plumber can order these from the\ncompany stores after taking approval from the customer",
+        "In such case, the corresponding cost will\nautomatically get added to the invoice.\n14"
+      ]
+    },
+    {
+      "id": "page_16",
+      "sentences": [
+        "Figure 3.10: Complaint resolution: Component Procurement\nFigure 3.11: Component Procurement\n15"
+      ]
+    },
+    {
+      "id": "page_17",
+      "sentences": [
+        "Figure 3.12: Component Procurement: Customer Purchase\nFigure 3.13: Component Procurement: Plumber Purchase\n16"
+      ]
+    },
+    {
+      "id": "page_18",
+      "sentences": [
+        "Figure 3.14: Component Procurement: Plumber Purchase (Cashless)\nFigure 3.15: Component Procurement: Company Purchase\n17"
+      ]
+    },
+    {
+      "id": "page_19",
+      "sentences": [
+        "• Outside purchase: In this case, the spare part may have to be procured from some other source.\nHere, the customer may purchase it from outside and provide the same to the plumber",
+        "No changes\nneed to be done to the invoice",
+        "The other option is that the plumber purchases it on his own, and\nraises a reimbursement request to the company",
+        "The company, after ensuring that necessary approval\nfrom the customer has been obtained, releases the money",
+        "Another alternative could be to purchase\nthe part through the company",
+        "In this case, the company verifies that necessary approval from the\ncustomer has been obtained, and then orders the part on behalf of the plumber.\nQUESTION (Sujit)\nSuppose a plumber chooses to procure a spare from outside supplier through the company",
+        "I assume,\nthis would happen through the purchase department (or something similar)",
+        "Similarly, if the plumber\nprocures a spare from outside and requests reimbursement, the finance department would have to reim-\nburse the same",
+        "Hence, the both the above cases, the system would need to interface with some other\ninternal system, viz",
+        "purchase requisition system in the former case and finance system in the latter.\nIs my understanding correct?\nANSWER (Pankaj Jadhav)\nThere are two scenarios in Product or Spare requirement:\nFree of Cost (FOC): Plumber will seek approval from APPL Service manager by submitting the\ndefect and purchase proof image > Plumber pick the product from nearest dealer or DP (Distributor\nPartner) on loan basis after approval > Defective Product or Spare will be submitted to APPL Service\nmanager by plumber along with defect return challan generated from the system against the complaint\n> APPL Service manager will route the challan to APPL finance for Credit note1 > Finance will pay\nthe amount to DP and mention the CN closure note in CRM.\nBilling or Chargeable: Plumber will generate the quote from system or CRM along with the\nnearest dealer or DP name (Rate are predefined and fixed) > Get the quote approved from end customer\n> Reach out to nearest Dealer or DP for getting the necessary Product or Spare along with proper tax\ninvoice > Collect the part charges from customer after replacing it > Submit the payment to Dealer\nor DP from where he/she took the material on loan basis",
+        "This process is applicable for non APPL\nbrand product however the plumber will be incentivized only on sale of APPL product or spare against\nuploading of valid DP or dealer invoice.\n18"
+      ]
+    },
+    {
+      "id": "page_20",
+      "sentences": [
+        "Part III\nDesign\n19"
+      ]
+    },
+    {
+      "id": "page_21",
+      "sentences": [
+        "Chapter 4\nArchitecture\n4.1\nContext\nFuture Work on Architectural Design\nWork on the precise definition of interfaces between sub-systems and their deployment models.\nFigure 4.1: Architectural Context\n20"
+      ]
+    },
+    {
+      "id": "page_22",
+      "sentences": [
+        "Chapter 5\nUser Interface\n5.1\nCommon\n5.2\nCustomer Interface\n5.3\nPlumber Interface\nThe plumber’s dashboard’s most important item is the ”My Complaints”",
+        "When the plumber selects this\noption, the list of complaints will be shown to the plumber",
+        "The complaints may be sorted as per different\ncriteria, e.g",
+        "name of the customer, date of raising, date of acceptance, date of completion, state (e.g",
+        "raised,\ncompleted etc.)\nWhen the plumber selects a particular complaint, what gets shown to him depends on the state of the\ncomplaint",
+        "For example, if a complaint has already been accepted, there should be no option provided to\naccept/reject it",
+        "If a complaint has been paused, the plumber should not be allowed to do anything in it\nunless it is resumed.\nThis restriction of available choices will limit the number of decisions or choices the plumber has to make\nat any point in time",
+        "This will lead to increased usability.\n5.4\nService Manager Interface\n5.4.1\nPlumber Suggestion\nA service manager will be responsible for many discretionary activities",
+        "For now, many of the processes\nwhich will end up as automated will be routed through the service manager",
+        "A service manager would have\nthe provision to either explicitly delicate the process to an algorithm, or execute it himself",
+        "For example,\nwhen a new complaint is raised, depending on the region, the same will be routed through a regional service\nmanager",
+        "The service manager may then decide to manually produce a set of suggestions for the customer\nor invoke the algorithm to do it automatically.\n21"
+      ]
+    },
+    {
+      "id": "page_23",
+      "sentences": [
+        "Figure 5.1: Plumber screens\n22"
+      ]
+    },
+    {
+      "id": "page_24",
+      "sentences": [
+        "Figure 5.2: Plumber UI Navigation\n(a)\n(b)\nFigure 5.3: Plumber Suggestion: (a) Automatic; (b) Manual\n23"
+      ]
+    },
+    {
+      "id": "page_25",
+      "sentences": [
+        "(a)\n(b)\nFigure 5.4: Activity diagrams for plumber suggestion: (a) Automatic; (b) Manual\n24"
+      ]
+    },
+    {
+      "id": "page_26",
+      "sentences": [
+        "Chapter 6\nObject Model\n25"
+      ]
+    },
+    {
+      "id": "page_27",
+      "sentences": [
+        "Future work on Object Model\nIdentification of additional classes, their attributes and relations",
+        "This will lead to uncovering avenues\nof both reuse and modularisation.\n26"
+      ]
+    },
+    {
+      "id": "page_28",
+      "sentences": [
+        "Chapter 7\nData Model\n(Database design)\n7.1\nCollections\n• Complaints\n• RegisteredCustomer\n• RegisteredManager\n• RegisteredPlumber\n• RegisteredUsers\n7.2\nTable Details\n• RegisteredUsers = ( username *, contact, email, firstName, lastName, password )\n• RegisteredPlumber = ( username *, acceptedComplaints array, complaints array, password, spe-\ncialisations array )\n• RegisteredManager = ( username *, password )\n• RegisteredCustomer = ( username (primary key), complaints (array), contact, password )\n• Complaints = ( complaintID *, billAmount, complaint, complaintCategory array, contact, paid,\nplumberUsername, purchaseCostHistory array, purchaseDetailsHistory array, purchaseTypeHistory ar-\nray, status, username )\nFuture work on data modelling\nTables need to normalised for functional independence and optimal use of space.\n27"
+      ]
+    },
+    {
+      "id": "page_29",
+      "sentences": [
+        "Chapter 8\nAlgorithms\n8.1\nPlumber Assignment\nfunction\nAlgo (){\n// JS program to implement\n// the above\napproach\nlet maxsize = Number.MAX_VALUE\n// Stores the found\nedges\nlet found = []\n// Stores the number of nodes\nlet N = 0\n// Stores the\ncapacity\n// of each edge\nlet cap = []\nlet flow = []\n// Stores the cost per\n// unit flow of each edge\nlet cost = []\n// Stores the\ndistance\nfrom each node\n// and picked\nedges for each node\nlet dad = []\nlet dist = []\nlet pi = []\nlet\nassignment = [];\nlet INF = Math.floor(maxsize / 2) - 1\n// Function to check if it is possible to\n// have a flow from the src to sink\nfunction\nsearch(src , sink)\n{\n// Initialise\nfound [] to false\n28"
+      ]
+    },
+    {
+      "id": "page_30",
+      "sentences": [
+        "let found = new Array(N)",
+        "fill(false)\n// Initialise\nthe dist [] to INF\nlet dist = new Array(N + 1)",
+        "fill(INF)\n// Distance\nfrom the source\nnode\ndist[src] = 0\n// Iterate\nuntil src\nreaches N\nwhile (src != N)\n{\nlet best = N\nfound[src] = true\nfor (var k = 0; k < N; k++)\n{\n// If already\nfound\nif (found[k])\ncontinue\n// Evaluate\nwhile\nflow\n// is still in supply\nif (flow[k][src] != 0)\n{\n// Obtain the total\nvalue\nlet val = (dist[src] + pi[src] -\npi[k] - cost[k][src])\n// If dist[k] is > minimum\nvalue\nif (dist[k] > val)\n{\n// Update\ndist[k] = val\ndad[k] = src\n}\n}\nif (flow[src][k] < cap[src][k])\n{\nlet val = (dist[src] + pi[src] -\npi[k] + cost[src][k])\n// If dist[k] is > minimum\nvalue\nif (dist[k] > val)\n{\n// Update\ndist[k] = val\ndad[k] = src\n}\n}\nif (dist[k] < dist[best ])\nbest = k\n29"
+      ]
+    },
+    {
+      "id": "page_31",
+      "sentences": [
+        "}\n// Update src to best for\n// next\niteration\nsrc = best\n}\nfor (var k = 0; k < N; k++)\npi[k] = Math.min(pi[k] + dist[k], INF)\n// Return the value\nobtained at sink\nreturn\nfound[sink]\n}\n// Function to obtain the\nmaximum\nFlow\nfunction\ngetMaxFlow(capi , costi ,\nsrc , sink)\n{\ncap = capi\ncost = costi\nN = (capi )",
+        "length\nfound =\nnew Array(N)",
+        "fill(false );\nflow = new Array(N);\nfor (var i = 0; i < N; i++)\nflow[i] = new Array(N)",
+        "fill (0)\ndist = new Array(N + 1)",
+        "fill(INF)\ndad = new Array(N)",
+        "fill (0)\npi = new Array(N)",
+        "fill (0)\ntotflow = 0\ntotcost = 0\n// If a path\nexist\nfrom src to sink\nwhile (search(src , sink ))\n{\nlet paths = [sink ];\n// Set the\ndefault\namount\namt = INF\nx = sink\nwhile (x != src)\n{\namt = Math.min(\namt ,\n(flow[x][dad[x]] != 0)? flow[x][dad[x]]:\ncap[dad[x]][x] - flow[dad[x]][x])\nx = dad[x]\n}\n30"
+      ]
+    },
+    {
+      "id": "page_32",
+      "sentences": [
+        "x = sink\nwhile (x != src)\n{\n// if dad[x] == 0, then add the\nexisting\narray\ninto a bigger\narray\npaths.push(dad[x]);\nif (flow[x][dad[x]] != 0)\n{\nflow[x][dad[x]]\n-= amt\ntotcost\n-= amt * cost[x][dad[x]]\n}\nelse\n{\nflow[dad[x]][x] += amt\ntotcost += amt * cost[dad[x]][x]\n}\nx = dad[x]\n}\ntotflow += amt\nassignment.push(paths );\n}\n// Return\npair\ntotal\ncost and sink\nreturn [totflow , totcost]\n}\n// Driver\nCode\nlet s = 0\nlet t = 3\ncap = [ [ 0, 4, 0, 0, 0, 3 ],\n[ 0, 0, 3, 0, 1, 0 ],\n[ 0, 0, 0, 1, 0, 0 ],\n[ 0, 0, 0, 0, 0, 0 ],\n[ 0, 0, 0, 5, 0, 0 ],\n[ 0, 0, 1, 0, 3, 0 ] ]\ncost = [[ 0, 2, 0, 0, 0, 2 ],\n[ 0, 0, 1, 0, 2, 0 ],\n[ 0, 0, 0, 2, 0, 0 ],\n[ 0, 0, 0, 0, 0, 0 ],\n[ 0, 0, 0, 1, 0, 0 ],\n[ 0, 0, 0, 0, 2, 0 ] ]\nlet ret = getMaxFlow(cap , cost , s, t)\nreturn (assignment );\n}\n31"
+      ]
+    },
+    {
+      "id": "page_33",
+      "sentences": [
+        "8.2\nPlumber Rating\nFuture work on Algorithms\nNeat presentation of algorithms with pseudocode, illustrative examples etc.\n32"
+      ]
+    },
+    {
+      "id": "page_34",
+      "sentences": [
+        "Part IV\nPrototype System and Demo\n33"
+      ]
+    },
+    {
+      "id": "page_35",
+      "sentences": [
+        "Chapter 9\nRepository and Installation\n9.1\nRepository\nAll output (documentation and code) are currently hosted in this Git repository.\n9.2\nInstallation Instructions\n34"
+      ]
+    },
+    {
+      "id": "page_36",
+      "sentences": [
+        "Chapter 10\nUsing/Testing the Prototype\nThe demonstration is arranged as test cases",
+        "Each test case is manually executed starting from an initial\nstate",
+        "The application is brought to the initial state in the setup step of a test case",
+        "The setup step does\nthe following:\n1",
+        "setup DB: Put the database in an appropriate state.\n2",
+        "Launch UI: Launch the appropriate UI screen as the starting point of the test case.\nThe test launch screen (available only for demo) is as shown in Fig",
+        "10.1.\nt1\nt2\nt3\nt4\nt5\nt6\nt7\nt8\nt9\nFigure 10.1: Test launch screen\n10.1\nTesting Using the Complaint State Machine\nHere, we utilise the complaint state machine (Fig",
+        "3.8) to design test cases",
+        "In doing so, the application\nmust first be brought to a state where there is a customer who is about to raise a complaint",
+        "Thereafter,\neach test case below traverses one path leading from from the init state to one of the final states (Cancelled,\nDone, Abandoned).\n10.1.1\nTesting the complaint state machine: tsm1\nOn launching tsm1, the following setup steps take place:\n1",
+        "setup DB: The DB contains the following:\n(a) One customer: C1\n(b) A few plumbers: P1, P2, P3\n(c) A service manager: M1\n(d) A set of components: Co1, Co2, Co3\n(e) ...\n2",
+        "Launch UI: Dashboard of customer C1\n35"
+      ]
+    },
+    {
+      "id": "page_37",
+      "sentences": [
+        "Raised\nCancelled\nAssigned\nAccepted\nUnder\nExamination\nQuotation\nRaised\nAbandoned\nPaused\nUnder\nExecution\nCompleted\nPayment\nPending\nDone\nraise(C)\ncancel(C)\nassign(M/S)\ncancel(C)\nassign(M)\nvisit(P)\nraise\nquotation(P)\nreject\nquotation(C)\naccept(C) [spares\nunavailable]\naccept(C) [spares\navailable]\nresume(P)\nexecuted(P)\nsolution\naccepted(C)\nsolution\nrejected(C)\npay(C)\nRaised\nCancelled\nAssigned\nAccepted\nUnder\nExamination\nQuotation\nRaised\nAbandoned\nPaused\nUnder\nExecution\nCompleted\nPayment\nPending\nDone\nraise(C)\ncancel(C)\nassign(M/S)\ncancel(C)\nassign(M)\nvisit(P)\nraise\nquotation(P)\nreject\nquotation(C)\naccept(C) [spares\nunavailable]\naccept(C) [spares\navailable]\nresume(P)\nexecuted(P)\nsolution\naccepted(C)\nsolution\nrejected(C)\npay(C)\n(a)\n(b)\nRaised\nCancelled\nAssigned\nAccepted\nUnder\nExamination\nQuotation\nRaised\nAbandoned\nPaused\nUnder\nExecution\nCompleted\nPayment\nPending\nDone\nraise(C)\ncancel(C)\nassign(M/S)\ncancel(C)\nassign(M)\nvisit(P)\nraise\nquotation(P)\nreject\nquotation(C)\naccept(C) [spares\nunavailable]\naccept(C) [spares\navailable]\nresume(P)\nexecuted(P)\nsolution\naccepted(C)\nsolution\nrejected(C)\npay(C)\nRaised\nCancelled\nAssigned\nAccepted\nUnder\nExamination\nQuotation\nRaised\nAbandoned\nPaused\nUnder\nExecution\nCompleted\nPayment\nPending\nDone\nraise(C)\ncancel(C)\nassign(M/S)\ncancel(C)\nassign(M)\nvisit(P)\nraise\nquotation(P)\nreject\nquotation(C)\naccept(C) [spares\nunavailable]\naccept(C) [spares\navailable]\nresume(P)\nexecuted(P)\nsolution\naccepted(C)\nsolution\nrejected(C)\npay(C)\n(c)\n(d)\nRaised\nCancelled\nAssigned\nAccepted\nUnder\nExamination\nQuotation\nRaised\nAbandoned\nPaused\nUnder\nExecution\nCompleted\nPayment\nPending\nDone\nraise(C)\n(1)\ncancel(C)\nassign(M/S)\n(2, 9)\ncancel(C)\nassign(M)\n(3, 10)\nvisit(P)\n(4, 11)\nraise\nquotation(P)\n(5, 12)\nreject\nquotation(C)\naccept(C) [spares\nunavailable]\naccept(C) [spares\navailable]\n(6, 13)\nresume(P)\nexecuted(P)\n(7, 14)\nsolution\naccepted(C)\n(15)\nsolution\nrejected(C)\n(8)\npay(C)\n(16)\nRaised\nCancelled\nAssigned\nAccepted\nUnder\nExamination\nQuotation\nRaised\nAbandoned\nPaused\nUnder\nExecution\nCompleted\nPayment\nPending\nDone\nraise(C)\ncancel(C)\nassign(M/S)\ncancel(C)\nassign(M)\nvisit(P)\nraise\nquotation(P)\nreject\nquotation(C)\naccept(C) [spares\nunavailable]\naccept(C) [spares\navailable]\nresume(P)\nexecuted(P)\nsolution\naccepted(C)\nsolution\nrejected(C)\npay(C)\n(e)\n(f)\nFigure 10.2: Testing the complaint state machine: (a) tsm1; (b) tsm2; (c) tsm3; (d) tsm4; (e) tsm5; (f)\ntsm6\n36"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,612 @@
+[
+  {
+    "Source_NL": "A user belonging to a higher privilege level is allowed to invite any individual to sign up at a lower privilege level.",
+    "Lifted_NL": "always (user u's privilege level > privilege level p) implies (u has permission to invite an individual to sign up with privilege level p)",
+    "Formal_Spec": {
+      "LABEL": "INVITE_USER_PRIVILEGE_OK",
+      "Precondition": "u ∈ dom(U) ∧ U[u].privilege_level > p",
+      "Function": "invite_user(inviterID: u, invitee_email: i, privilege_level: p) → 201 Created",
+      "Postcondition": "∃ inv ∈ Invitations' ∧ inv.inviter = u ∧ inv.invitee_email = i ∧ inv.privilege_level = p"
+    }
+  },
+  {
+    "Source_NL": "Likewise, user belonging to a a higher privilege level is allowed to delete any account at a lower privilege level if required.",
+    "Lifted_NL": "always (user u's privilege level > account a's privilege level) implies (u has permission to delete account a)",
+    "Formal_Spec": {
+      "LABEL": "DELETE_ACCOUNT_PRIVILEGE_OK",
+      "Precondition": "u ∈ dom(U) ∧ a ∈ dom(U) ∧ U[u].privilege_level > U[a].privilege_level",
+      "Function": "delete_account(deleterID: u, accountID: a) → 200 OK",
+      "Postcondition": "dom(U') = dom(U) - {a}"
+    }
+  },
+  {
+    "Source_NL": "A customer’s primary role is to raise complaints as required.",
+    "Lifted_NL": "always a customer has the capability to raise a complaint",
+    "Formal_Spec": {
+      "LABEL": "CUSTOMER_CAN_RAISE_COMPLAINT",
+      "Precondition": "c ∈ dom(U) ∧ U[c].role = 'customer'",
+      "Function": "raise_complaint(customerID: c, details: d) → 201 Created",
+      "Postcondition": "∃ new_complaint ∈ dom(Complaints') ∧ Complaints'[new_complaint].customerID = c"
+    }
+  },
+  {
+    "Source_NL": "At various stages of processing a complaint, a customer would need to perform various actions like:\n• select a plumber as suggested by the system or ask for more suggestions\n• select a time slot as suggested by the system or ask for more suggestions\n• approve or reject a quotation as raised by a plumber\n• give feedback on the processing of a complaint\n• make necessary payments",
+    "Lifted_NL": "always when a complaint is being processed, the associated customer has permissions to [select plumber, ask for more plumber suggestions, select time slot, ask for more time slot suggestions, approve quotation, reject quotation, give feedback, make payment]",
+    "Formal_Spec": {
+      "LABEL": "CUSTOMER_CAN_APPROVE_QUOTATION",
+      "Precondition": "c ∈ dom(Complaints) ∧ Complaints[c].status = 'processing' ∧ cust = Complaints[c].customerID ∧ Complaints[c].quotation_status = 'pending'",
+      "Function": "approve_quotation(customerID: cust, complaintID: c) → 200 OK",
+      "Postcondition": "Complaints' = Complaints with Complaints'[c].quotation_status = 'approved'"
+    }
+  },
+  {
+    "Source_NL": "Sign-up and sign-in are necessary prerequisite use cases for performing any other actions.",
+    "Lifted_NL": "always (user u attempts to perform action a AND a is not sign-up AND a is not sign-in) implies (u must be signed in)",
+    "Formal_Spec": {
+      "LABEL": "MUST_BE_SIGNED_IN",
+      "Precondition": "is_signed_in(u)",
+      "Function": "perform_protected_action(userID: u, details: d) → 200 OK",
+      "Postcondition": "U' reflects successful action"
+    }
+  },
+  {
+    "Source_NL": "A plumber would be able to view all complaints assigned to him so far.",
+    "Lifted_NL": "always a plumber p has permission to view a complaint c if c is assigned to p",
+    "Formal_Spec": {
+      "LABEL": "PLUMBER_VIEW_ASSIGNED_COMPLAINT_OK",
+      "Precondition": "p ∈ dom(U) ∧ U[p].role = 'plumber' ∧ c ∈ dom(Complaints) ∧ Complaints[c].assigned_plumber = p",
+      "Function": "view_complaint(plumberID: p, complaintID: c) → 200 OK",
+      "Postcondition": "U' = U ∧ Complaints' = Complaints"
+    }
+  },
+  {
+    "Source_NL": "The plumber can respond to active complaints assigned to him.",
+    "Lifted_NL": "always a plumber p has permission to respond to a complaint c if c's status is active AND c is assigned to p",
+    "Formal_Spec": {
+      "LABEL": "PLUMBER_RESPOND_TO_COMPLAINT_OK",
+      "Precondition": "p ∈ dom(U) ∧ U[p].role = 'plumber' ∧ c ∈ dom(Complaints) ∧ Complaints[c].status = 'active' ∧ Complaints[c].assigned_plumber = p",
+      "Function": "respond_to_complaint(plumberID: p, complaintID: c, response: r) → 200 OK",
+      "Postcondition": "Complaints' = Complaints with Complaints'[c].plumber_response = r"
+    }
+  },
+  {
+    "Source_NL": "He can order spares from the company warehouse.",
+    "Lifted_NL": "always a plumber p has permission to order spares from the company warehouse",
+    "Formal_Spec": {
+      "LABEL": "PLUMBER_CAN_ORDER_SPARES",
+      "Precondition": "p ∈ dom(U) ∧ U[p].role = 'plumber'",
+      "Function": "order_spares(plumberID: p, spare_parts: s) → 201 Created",
+      "Postcondition": "∃ new_order ∈ Orders' ∧ new_order.plumberID = p ∧ new_order.parts = s"
+    }
+  },
+  {
+    "Source_NL": "He can communicate with the customer and seek his approval to use any spares required for a repair job.",
+    "Lifted_NL": "always a plumber p has permission to communicate with a customer c AND seek c's approval to use spares for a repair job",
+    "Formal_Spec": {
+      "LABEL": "PLUMBER_REQUEST_SPARES_APPROVAL_OK",
+      "Precondition": "p ∈ dom(U) ∧ U[p].role = 'plumber' ∧ complaint ∈ dom(Complaints) ∧ Complaints[complaint].assigned_plumber = p ∧ Complaints[complaint].customerID = c",
+      "Function": "request_spares_approval(plumberID: p, complaintID: complaint, spares_list: s) → 200 OK",
+      "Postcondition": "Complaints' = Complaints with Complaints'[complaint].spares_approval_status = 'pending'"
+    }
+  },
+  {
+    "Source_NL": "He would be allowed to check out spares only if the customer has consented to pay for the spares/components.",
+    "Lifted_NL": "always (a plumber p attempts to check out spares) implies (the associated customer c has consented to pay for the spares)",
+    "Formal_Spec": {
+      "LABEL": "CHECKOUT_SPARES_CUSTOMER_CONSENT_OK",
+      "Precondition": "p ∈ dom(U) ∧ U[p].role = 'plumber' ∧ c ∈ dom(Complaints) ∧ Complaints[c].assigned_plumber = p ∧ Complaints[c].spares_approval_status = 'approved'",
+      "Function": "checkout_spares(plumberID: p, complaintID: c, spares: s) → 200 OK",
+      "Postcondition": "Warehouse'.stock = Warehouse.stock - s"
+    }
+  },
+  {
+    "Source_NL": "A plumber must sign up as a plumber before he can avail the features of the applications.",
+    "Lifted_NL": "always (user u attempts to avail plumber features) implies (u must have signed up as a plumber)",
+    "Formal_Spec": {
+      "LABEL": "PLUMBER_FEATURE_ACCESS_OK",
+      "Precondition": "u ∈ dom(U) ∧ U[u].role = 'plumber'",
+      "Function": "access_plumber_feature(userID: u, feature_details: d) → 200 OK",
+      "Postcondition": "U' = U"
+    }
+  },
+  {
+    "Source_NL": "While signing up, a plumber mentions his specialties on the system along with other details.",
+    "Lifted_NL": "when a user u signs up as a plumber, u must provide specialties AND other details",
+    "Formal_Spec": {
+      "LABEL": "SIGNUP_PLUMBER_DETAILS_REQUIRED",
+      "Precondition": "details.specialties ≠ NULL ∧ details.other_details ≠ NULL ∧ ¬(∃ u ∈ dom(U) ∧ U[u].email = details.email ∧ U[u].role = 'plumber')",
+      "Function": "signup_plumber(details: d) → 201 Created",
+      "Postcondition": "∃ u_new ∈ dom(U') ∧ U'[u_new].role = 'plumber' ∧ U'[u_new].specialties = details.specialties"
+    }
+  },
+  {
+    "Source_NL": "Once signed up, the plumber would go through an examination/verification.",
+    "Lifted_NL": "eventually after a user u signs up as a plumber, u's status becomes pending verification",
+    "Formal_Spec": {
+      "LABEL": "SIGNUP_PLUMBER_SETS_PENDING_STATUS",
+      "Precondition": "¬(∃ u ∈ dom(U) ∧ U[u].email = details.email ∧ U[u].role = 'plumber')",
+      "Function": "signup_plumber(details: d) → 201 Created",
+      "Postcondition": "∃ u_new ∈ dom(U') ∧ U'[u_new].email = details.email ∧ U'[u_new].role = 'plumber' ∧ U'[u_new].status = 'pending verification'"
+    }
+  },
+  {
+    "Source_NL": "If found suitable, the plumber would be inducted to the fleet of plumbers by the service manager.",
+    "Lifted_NL": "always if a plumber p's verification result is suitable, then a service manager inducts p AND p's status becomes active",
+    "Formal_Spec": {
+      "LABEL": "INDUCT_PLUMBER_SUITABLE_OK",
+      "Precondition": "m ∈ dom(U) ∧ U[m].role = 'manager' ∧ p ∈ dom(U) ∧ U[p].role = 'plumber' ∧ U[p].verification_result = 'suitable'",
+      "Function": "induct_plumber(managerID: m, plumberID: p) → 200 OK",
+      "Postcondition": "U' = U with U'[p].status = 'active'"
+    }
+  },
+  {
+    "Source_NL": "Otherwise, the plumber may either be sent for an upskilling training programme or may be rejected.",
+    "Lifted_NL": "always if a plumber p's verification result is not suitable, then (p's status becomes requires training OR p's status becomes rejected)",
+    "Formal_Spec": {
+      "LABEL": "PROCESS_UNSUITABLE_VERIFICATION_OK",
+      "Precondition": "m ∈ dom(U) ∧ U[m].role = 'manager' ∧ p ∈ dom(U) ∧ U[p].role = 'plumber' ∧ U[p].verification_result = 'not suitable' ∧ decision ∈ {'requires_training', 'rejected'}",
+      "Function": "process_unsuitable_verification(managerID: m, plumberID: p, decision: d) → 200 OK",
+      "Postcondition": "U' = U with U'[p].status = decision"
+    }
+  },
+  {
+    "Source_NL": "A dismissed plumber will be allowed to re-apply on meeting certain conditions as defined by the organisation.",
+    "Lifted_NL": "always a plumber p with status dismissed has permission to re-apply if p meets organisation-defined conditions",
+    "Formal_Spec": {
+      "LABEL": "PLUMBER_REAPPLY_OK",
+      "Precondition": "p ∈ dom(U) ∧ U[p].role = 'plumber' ∧ U[p].status = 'dismissed' ∧ meets_reapply_conditions(U[p])",
+      "Function": "reapply_plumber(plumberID: p) → 200 OK",
+      "Postcondition": "U' = U with U'[p].status = 'pending verification'"
+    }
+  },
+  {
+    "Source_NL": "Plumber sees a new complaint assigned to him.",
+    "Lifted_NL": "when a new complaint c is assigned to a plumber p, eventually p is notified of c",
+    "Formal_Spec": {
+      "LABEL": "ASSIGN_COMPLAINT_NOTIFIES_PLUMBER",
+      "Precondition": "m ∈ dom(U) ∧ U[m].role = 'manager' ∧ p ∈ dom(U) ∧ U[p].role = 'plumber' ∧ c ∈ dom(Complaints) ∧ Complaints[c].status = 'raised'",
+      "Function": "assign_complaint(managerID: m, plumberID: p, complaintID: c) → 200 OK",
+      "Postcondition": "Complaints'[c].assigned_plumber = p ∧ ∃ n ∈ Notifications' ∧ n.recipient = p ∧ n.complaintID = c"
+    }
+  },
+  {
+    "Source_NL": "Customer gets notified about the plumber details.",
+    "Lifted_NL": "when a plumber p is assigned to a complaint c, eventually the customer associated with c is notified of p's details",
+    "Formal_Spec": {
+      "LABEL": "ASSIGN_COMPLAINT_NOTIFIES_CUSTOMER",
+      "Precondition": "m ∈ dom(U) ∧ U[m].role = 'manager' ∧ p ∈ dom(U) ∧ U[p].role = 'plumber' ∧ c ∈ dom(Complaints) ∧ Complaints[c].status = 'raised'",
+      "Function": "assign_complaint(managerID: m, plumberID: p, complaintID: c) → 200 OK",
+      "Postcondition": "Complaints'[c].assigned_plumber = p ∧ ∃ n ∈ Notifications' ∧ n.recipient = Complaints[c].customerID ∧ n.content = U[p].details"
+    }
+  },
+  {
+    "Source_NL": "System looks at the earliest available slots with the given plumber and shares with a list of suggested visit slots with the customer.",
+    "Lifted_NL": "when a plumber p is assigned to a complaint c, the system eventually suggests a list of earliest available visit slots for p to the customer of c",
+    "Formal_Spec": {
+      "LABEL": "ASSIGN_COMPLAINT_SUGGESTS_SLOTS",
+      "Precondition": "c ∈ dom(Complaints) ∧ Complaints[c].status = 'raised'",
+      "Function": "assign_complaint(managerID: m, plumberID: p, complaintID: c) → 200 OK",
+      "Postcondition": "Complaints'[c].assigned_plumber = p ∧ Complaints'[c].suggested_slots = calculate_slots(p, c)"
+    }
+  },
+  {
+    "Source_NL": "Customer selects a visit slot from among the provided slots.",
+    "Lifted_NL": "eventually the customer c selects a visit slot s where s is in the list of system-suggested slots",
+    "Formal_Spec": {
+      "LABEL": "CUSTOMER_SELECT_SLOT_OK",
+      "Precondition": "c ∈ dom(U) ∧ U[c].role = 'customer' ∧ complaint ∈ dom(Complaints) ∧ Complaints[complaint].customerID = c ∧ s ∈ Complaints[complaint].suggested_slots",
+      "Function": "select_slot(customerID: c, complaintID: complaint, slot: s) → 200 OK",
+      "Postcondition": "Complaints' = Complaints with Complaints'[complaint].confirmed_slot = s"
+    }
+  },
+  {
+    "Source_NL": "In case the customer doesn’t find any of the suggested slots suitable, the system has to suggest more slots.",
+    "Lifted_NL": "when a customer c rejects all suggested visit slots for a complaint, the system must eventually suggest a new list of visit slots",
+    "Formal_Spec": {
+      "LABEL": "REJECT_SLOTS_TRIGGERS_NEW_SUGGESTIONS",
+      "Precondition": "complaint ∈ dom(Complaints) ∧ Complaints[complaint].customerID = c",
+      "Function": "reject_all_slots(customerID: c, complaintID: complaint) → 200 OK",
+      "Postcondition": "Complaints'[complaint].suggested_slots ≠ Complaints[complaint].suggested_slots"
+    }
+  },
+  {
+    "Source_NL": "In such cases, other plumbers should be considered.",
+    "Lifted_NL": "when the system suggests a new list of visit slots, the new list may be based on plumbers other than the originally assigned plumber",
+    "Formal_Spec": {
+      "LABEL": "REQUEST_NEW_PLUMBER_AND_SLOTS_OK",
+      "Precondition": "complaint ∈ dom(Complaints) ∧ Complaints[complaint].customerID = c",
+      "Function": "request_new_plumber_and_slots(customerID: c, complaintID: complaint) → 200 OK",
+      "Postcondition": "Complaints'[complaint].assigned_plumber ≠ Complaints[complaint].assigned_plumber ∧ Complaints'[complaint].suggested_slots = calculate_slots(Complaints'[complaint].assigned_plumber, c)"
+    }
+  },
+  {
+    "Source_NL": "The need to provide these details should be optional.",
+    "Lifted_NL": "always a customer c has permission to raise a complaint even if optional solicited information is not provided",
+    "Formal_Spec": {
+      "LABEL": "RAISE_COMPLAINT_OPTIONAL_INFO_OK",
+      "Precondition": "c ∈ dom(U) ∧ U[c].role = 'customer' ∧ has_essential_info(details)",
+      "Function": "raise_complaint(customerID: c, details: d) → 201 Created",
+      "Postcondition": "∃ new_complaint ∈ dom(Complaints') ∧ Complaints'[new_complaint].customerID = c"
+    }
+  },
+  {
+    "Source_NL": "It should be possible for the customer to go ahead with the complaint raising with/without providing any piece of information that the system solicits.",
+    "Lifted_NL": "always it is possible for a quotation to be generated AND payment to be made when a complaint is raised",
+    "Formal_Spec": {
+      "LABEL": "GENERATE_QUOTATION_POSSIBLE",
+      "Precondition": "a ∈ dom(U) ∧ (U[a].role = 'plumber' ∨ U[a].role = 'manager') ∧ c ∈ dom(Complaints) ∧ Complaints[c].status = 'Under examination'",
+      "Function": "generate_quotation(actorID: a, complaintID: c, quote_details: qd) → 200 OK",
+      "Postcondition": "Complaints' = Complaints with Complaints'[c].quotation = qd, Complaints'[c].quotation_status = 'pending'"
+    }
+  },
+  {
+    "Source_NL": "The system algorithmically does the plumber and time allocation based on the information provided by the customer.",
+    "Lifted_NL": "always the final charges for a repair work are determined only after the task's status becomes completed",
+    "Formal_Spec": {
+      "LABEL": "FINALIZE_CHARGES_WHEN_COMPLETED_OK",
+      "Precondition": "c ∈ dom(Complaints) ∧ Complaints[c].status = 'completed'",
+      "Function": "finalize_charges(actorID: a, complaintID: c) → 200 OK",
+      "Postcondition": "Complaints'[c].final_charges = calculate_charges(c)"
+    }
+  },
+  {
+    "Source_NL": "Hence, a quotation and payment can be done right up front at the time of raising the complaint.",
+    "Lifted_NL": "always if a customer c is an existing customer AND is availing service for equipment under warranty, then c is not charged a visit fee",
+    "Formal_Spec": {
+      "LABEL": "NO_VISIT_FEE_FOR_WARRANTY",
+      "Precondition": "complaint ∈ dom(Complaints) ∧ U[Complaints[complaint].customerID].is_existing = true ∧ Complaints[complaint].is_warranty = true",
+      "Function": "finalize_charges(actorID: a, complaintID: complaint) → 200 OK",
+      "Postcondition": "Complaints'[complaint].final_charges.visit_fee = 0"
+    }
+  },
+  {
+    "Source_NL": "Hence, the final charges of a repair/maintenance work can be determined only after the completion of the task.",
+    "Lifted_NL": "always if a customer c is an outside customer, then c must be charged a visit fee",
+    "Formal_Spec": {
+      "LABEL": "VISIT_FEE_FOR_OUTSIDE_CUSTOMER",
+      "Precondition": "complaint ∈ dom(Complaints) ∧ U[Complaints[complaint].customerID].is_existing = false",
+      "Function": "finalize_charges(actorID: a, complaintID: complaint) → 200 OK",
+      "Postcondition": "Complaints'[complaint].final_charges.visit_fee > 0"
+    }
+  },
+  {
+    "Source_NL": "Pricing will be different for these two categories.",
+    "Lifted_NL": "always if a customer c rejects the service due to high spare parts cost, then the associated complaint's status becomes closed-satisfactory",
+    "Formal_Spec": {
+      "LABEL": "REJECT_SERVICE_DUE_TO_COST_OK",
+      "Precondition": "c ∈ dom(Complaints) ∧ Complaints[c].customerID = cust ∧ Complaints[c].quotation_status = 'pending'",
+      "Function": "reject_service_due_to_cost(customerID: cust, complaintID: c) → 200 OK",
+      "Postcondition": "Complaints' = Complaints with Complaints'[c].status = 'closed-satisfactory'"
+    }
+  },
+  {
+    "Source_NL": "Existing customers (who are availing service for equipments under warranty) will not be charged for visit.",
+    "Lifted_NL": "always the service department has permission to define service rates via a system interface",
+    "Formal_Spec": {
+      "LABEL": "DEFINE_SERVICE_RATES_OK",
+      "Precondition": "m ∈ dom(U) ∧ U[m].role = 'manager'",
+      "Function": "define_service_rates(managerID: m, new_rates: r) → 200 OK",
+      "Postcondition": "SystemConfig'.service_rates = r"
+    }
+  },
+  {
+    "Source_NL": "For outside customers, visiting charges will be mandatory.",
+    "Lifted_NL": "when a user u signs up, u must select a role from the set [customer, plumber, service manager]",
+    "Formal_Spec": {
+      "LABEL": "SIGNUP_REQUIRES_VALID_ROLE",
+      "Precondition": "details.role ∈ {'customer', 'plumber', 'manager'}",
+      "Function": "signup(details: d) → 201 Created",
+      "Postcondition": "∃ u_new ∈ dom(U') ∧ U'[u_new].role = details.role"
+    }
+  },
+  {
+    "Source_NL": "If the spare parts costs are deemed too high by the customer, and he wants not to go ahead with the service, the ticket will be closed as satisfactory.",
+    "Lifted_NL": "when a user u signs up, u must provide an email ID AND a phone number",
+    "Formal_Spec": {
+      "LABEL": "SIGNUP_REQUIRES_EMAIL_AND_PHONE",
+      "Precondition": "details.email ≠ NULL ∧ details.phone ≠ NULL",
+      "Function": "signup(details: d) → 201 Created",
+      "Postcondition": "∃ u_new ∈ dom(U') ∧ U'[u_new].email = details.email ∧ U'[u_new].phone = details.phone"
+    }
+  },
+  {
+    "Source_NL": "No wallet option provided.",
+    "Lifted_NL": "always for any given role r, the personal details (email, phone number) for all users with role r must be unique",
+    "Formal_Spec": {
+      "LABEL": "SIGNUP_ROLE_DETAILS_UNIQUE",
+      "Precondition": "¬(∃ u ∈ dom(U) ∧ U[u].role = details.role ∧ (U[u].email = details.email ∨ U[u].phone = details.phone))",
+      "Function": "signup(details: d) → 201 Created",
+      "Postcondition": "dom(U') = dom(U) ∪ {u_new}"
+    }
+  },
+  {
+    "Source_NL": "Charges will be decided based on various rules (e.g. location etc.)",
+    "Lifted_NL": "when a user u signs up with the customer role, u's account status immediately becomes active",
+    "Formal_Spec": {
+      "LABEL": "SIGNUP_CUSTOMER_IS_ACTIVE",
+      "Precondition": "details.role = 'customer'",
+      "Function": "signup(details: d) → 201 Created",
+      "Postcondition": "∃ u_new ∈ dom(U') ∧ U'[u_new].email = details.email ∧ U'[u_new].role = 'customer' ∧ U'[u_new].status = 'active'"
+    }
+  },
+  {
+    "Source_NL": "The service department will have an interface which will be used to define these rates.",
+    "Lifted_NL": "when a user u signs up with the plumber role, u's account is created with status unverified",
+    "Formal_Spec": {
+      "LABEL": "SIGNUP_PLUMBER_IS_UNVERIFIED",
+      "Precondition": "details.role = 'plumber'",
+      "Function": "signup(details: d) → 201 Created",
+      "Postcondition": "∃ u_new ∈ dom(U') ∧ U'[u_new].email = details.email ∧ U'[u_new].role = 'plumber' ∧ U'[u_new].status = 'unverified'"
+    }
+  },
+  {
+    "Source_NL": "Any user (except super user) would have to sign up to become part of the system.",
+    "Lifted_NL": "always for a plumber p's status to become active, p must have successfully completed verification and/or training",
+    "Formal_Spec": {
+      "LABEL": "ACTIVATE_PLUMBER_POST_VERIFICATION_OK",
+      "Precondition": "m ∈ dom(U) ∧ U[m].role = 'manager' ∧ p ∈ dom(U) ∧ U[p].role = 'plumber' ∧ (U[p].verification_status = 'success' ∨ U[p].training_status = 'completed')",
+      "Function": "activate_plumber(managerID: m, plumberID: p) → 200 OK",
+      "Postcondition": "U' = U with U'[p].status = 'active'"
+    }
+  },
+  {
+    "Source_NL": "At the time of sign up, a user would need to choose a role (e.g. customer, plumber or service manager).",
+    "Lifted_NL": "always a user u has permission to attempt to sign in by providing credentials",
+    "Formal_Spec": {
+      "LABEL": "USER_SIGNIN_OK",
+      "Precondition": "∃ u ∈ dom(U) ∧ verify_credentials(credentials, U[u])",
+      "Function": "signin(credentials: c) → 200 OK",
+      "Postcondition": "∃ s ∈ Sessions' ∧ s.userID = u"
+    }
+  },
+  {
+    "Source_NL": "Personal details like email ID and phone number will be collected at the time of sign up.",
+    "Lifted_NL": "the system provides a feature for a user u to reset their password if they have forgotten their credentials",
+    "Formal_Spec": {
+      "LABEL": "PASSWORD_RESET_FEATURE_EXISTS",
+      "Precondition": "∃ u ∈ dom(U) ∧ U[u].email = email",
+      "Function": "request_password_reset(email: e) → 200 OK",
+      "Postcondition": "∃ t ∈ ResetTokens' ∧ t.userID = u"
+    }
+  },
+  {
+    "Source_NL": "Hence, the system will mandate that, for a particular role, the personal details should be distinct.",
+    "Lifted_NL": "always a sign-in attempt by user u with role r succeeds only if u has an account with role r",
+    "Formal_Spec": {
+      "LABEL": "SIGNIN_ROLE_MUST_MATCH",
+      "Precondition": "∃ u ∈ dom(U) ∧ verify_credentials(credentials, U[u]) ∧ U[u].role = r",
+      "Function": "signin(credentials: c, role: r) → 200 OK",
+      "Postcondition": "∃ s ∈ Sessions' ∧ s.userID = u ∧ s.role = r"
+    }
+  },
+  {
+    "Source_NL": "However, it is fine for the same individual to hold multiple accounts with maximum one account in each user category (customer, plumber and service manager).",
+    "Lifted_NL": "when a complaint c is created, its initial state is Raised",
+    "Formal_Spec": {
+      "LABEL": "CREATE_COMPLAINT_SETS_RAISED_STATUS",
+      "Precondition": "cust ∈ dom(U) ∧ U[cust].role = 'customer'",
+      "Function": "raise_complaint(customerID: cust, details: d) → 201 Created",
+      "Postcondition": "∃ new_c ∈ dom(Complaints') ∧ Complaints'[new_c].customerID = cust ∧ Complaints'[new_c].status = 'Raised'"
+    }
+  },
+  {
+    "Source_NL": "A customer can sign up directly without any verification.",
+    "Lifted_NL": "when a complaint c with state Raised is assigned to a plumber, its state transitions to Assigned",
+    "Formal_Spec": {
+      "LABEL": "ASSIGN_COMPLAINT_SETS_ASSIGNED_STATUS",
+      "Precondition": "c ∈ dom(Complaints) ∧ Complaints[c].status = 'Raised'",
+      "Function": "assign_complaint(managerID: m, plumberID: p, complaintID: c) → 200 OK",
+      "Postcondition": "Complaints' = Complaints with Complaints'[c].status = 'Assigned', Complaints'[c].assigned_plumber = p"
+    }
+  },
+  {
+    "Source_NL": "A plumber can sign up directly without any verification.",
+    "Lifted_NL": "when a plumber p reports visiting the customer site for a complaint c, c's state transitions to Under examination",
+    "Formal_Spec": {
+      "LABEL": "REPORT_VISIT_SETS_UNDER_EXAMINATION_STATUS",
+      "Precondition": "c ∈ dom(Complaints) ∧ Complaints[c].assigned_plumber = p ∧ Complaints[c].status = 'Assigned'",
+      "Function": "report_site_visit(plumberID: p, complaintID: c) → 200 OK",
+      "Postcondition": "Complaints' = Complaints with Complaints'[c].status = 'Under examination'"
+    }
+  },
+  {
+    "Source_NL": "This marks the examination to be ON, and the complaint moves to under examination state.",
+    "Lifted_NL": "always when an event marks an examination ON, then the corresponding complaint's state becomes 'under examination'",
+    "Formal_Spec": {
+      "LABEL": "MARK_EXAMINATION_ON",
+      "Precondition": "c ∈ dom(U) ∧ U[c].type = 'complaint'",
+      "Function": "mark_examination_on(complaintID: c) → 200 OK",
+      "Postcondition": "U' = U with U'[c].status = 'under examination'"
+    }
+  },
+  {
+    "Source_NL": "• Quotation raised: After examination, the plumber examines the issue and generates an estimate or quotation of the approximate expenditure.",
+    "Lifted_NL": "always when a complaint c is in state 'examination complete', then a plumber p can examine c's issue and generate a quotation q, which causes c's state to become 'quotation raised'",
+    "Formal_Spec": {
+      "LABEL": "GENERATE_QUOTATION",
+      "Precondition": "p ∈ dom(U) ∧ U[p].role = 'plumber' ∧ c ∈ dom(U) ∧ U[c].type = 'complaint' ∧ U[c].status = 'examination complete'",
+      "Function": "generate_quotation(plumberID: p, complaintID: c, quotationDetails: q) → 201 Created",
+      "Postcondition": "U' = U with (U'[c].status = 'quotation raised' ∧ U'[c].quotation = q)"
+    }
+  },
+  {
+    "Source_NL": "This needs to be approved by the customer before the service can proceed further.",
+    "Lifted_NL": "always a service s for a complaint c can proceed only if the customer for c has approved the quotation for c",
+    "Formal_Spec": {
+      "LABEL": "PROCEED_SERVICE_IF_QUOTATION_APPROVED",
+      "Precondition": "p ∈ dom(U) ∧ U[p].role = 'plumber' ∧ c ∈ dom(U) ∧ U[c].type = 'complaint' ∧ U[c].quotation_status = 'approved'",
+      "Function": "start_service(plumberID: p, complaintID: c) → 200 OK",
+      "Postcondition": "U' = U with U'[c].status = 'under execution'"
+    }
+  },
+  {
+    "Source_NL": "• Under execution: Once the customer approves the quotation, the plumber starts working on the issue.",
+    "Lifted_NL": "always when a customer approves a quotation for a complaint c, then the plumber starts working on c's issue AND c's state becomes 'under execution'",
+    "Formal_Spec": {
+      "LABEL": "CUSTOMER_APPROVE_QUOTATION",
+      "Precondition": "cust ∈ dom(U) ∧ U[cust].role = 'customer' ∧ c ∈ dom(U) ∧ U[c].type = 'complaint' ∧ U[c].customer = cust ∧ U[c].status = 'quotation raised'",
+      "Function": "approve_quotation(customerID: cust, complaintID: c) → 200 OK",
+      "Postcondition": "U' = U with (U'[c].status = 'under execution' ∧ U'[c].quotation_status = 'approved')"
+    }
+  },
+  {
+    "Source_NL": "• Task completed: Once the task is completed to the satisfaction of the plumber, he marks it as completed.",
+    "Lifted_NL": "always when a plumber p is satisfied that the task for a complaint c is complete, then p can mark c as 'task completed'",
+    "Formal_Spec": {
+      "LABEL": "PLUMBER_MARK_TASK_COMPLETED",
+      "Precondition": "p ∈ dom(U) ∧ U[p].role = 'plumber' ∧ c ∈ dom(U) ∧ U[c].type = 'complaint' ∧ U[c].plumber = p ∧ U[c].status = 'under execution'",
+      "Function": "mark_task_completed(plumberID: p, complaintID: c) → 200 OK",
+      "Postcondition": "U' = U with U'[c].status = 'task completed'"
+    }
+  },
+  {
+    "Source_NL": "The customer’s feedback + acceptance is solicited by the system.",
+    "Lifted_NL": "always when a complaint c's state is 'task completed', then the system solicits feedback and acceptance from the customer for c",
+    "Formal_Spec": {
+      "LABEL": "SYSTEM_SOLICIT_FEEDBACK",
+      "Precondition": "c ∈ dom(U) ∧ U[c].type = 'complaint' ∧ U[c].status = 'task completed' ∧ U[c].feedback_solicited = false",
+      "Function": "solicit_feedback(complaintID: c) → 200 OK",
+      "Postcondition": "U' = U with U'[c].feedback_solicited = true"
+    }
+  },
+  {
+    "Source_NL": "If the customer finds the service not up to his/her satisfaction he/she may reject it.",
+    "Lifted_NL": "always when a customer rejects a service for a complaint c, then c's state becomes 'raised'",
+    "Formal_Spec": {
+      "LABEL": "CUSTOMER_REJECT_SERVICE",
+      "Precondition": "cust ∈ dom(U) ∧ U[cust].role = 'customer' ∧ c ∈ dom(U) ∧ U[c].type = 'complaint' ∧ U[c].customer = cust ∧ U[c].status = 'task completed'",
+      "Function": "reject_service(customerID: cust, complaintID: c) → 200 OK",
+      "Postcondition": "U' = U with U'[c].status = 'raised'"
+    }
+  },
+  {
+    "Source_NL": "This takes the issue back to the raised state.",
+    "Lifted_NL": "always when a customer accepts the solution for a complaint c, then c's state becomes 'payment pending'",
+    "Formal_Spec": {
+      "LABEL": "CUSTOMER_ACCEPT_SOLUTION",
+      "Precondition": "cust ∈ dom(U) ∧ U[cust].role = 'customer' ∧ c ∈ dom(U) ∧ U[c].type = 'complaint' ∧ U[c].customer = cust ∧ U[c].status = 'task completed'",
+      "Function": "accept_solution(customerID: cust, complaintID: c) → 200 OK",
+      "Postcondition": "U' = U with U'[c].status = 'payment pending'"
+    }
+  },
+  {
+    "Source_NL": "Alternatively, the customer may go ahead and accept/approve the solution.",
+    "Lifted_NL": "always if a complaint c's state is 'payment pending', then the customer for c must pay the expenses for the service",
+    "Formal_Spec": {
+      "LABEL": "CUSTOMER_PAY_EXPENSES",
+      "Precondition": "cust ∈ dom(U) ∧ U[cust].role = 'customer' ∧ c ∈ dom(U) ∧ U[c].type = 'complaint' ∧ U[c].customer = cust ∧ U[c].status = 'payment pending'",
+      "Function": "pay_for_complaint(customerID: cust, complaintID: c, paymentDetails: pd) → 200 OK",
+      "Postcondition": "U' = U with U'[c].status = 'payment completed'"
+    }
+  },
+  {
+    "Source_NL": "This takes the complaint to payment pending state.",
+    "Lifted_NL": "always when a complaint c's state is 'payment completed', then c's state becomes 'done'",
+    "Formal_Spec": {
+      "LABEL": "FINALIZE_COMPLAINT_AFTER_PAYMENT",
+      "Precondition": "c ∈ dom(U) ∧ U[c].type = 'complaint' ∧ U[c].status = 'payment completed'",
+      "Function": "finalize_complaint(complaintID: c) → 200 OK",
+      "Postcondition": "U' = U with U'[c].status = 'done'"
+    }
+  },
+  {
+    "Source_NL": "• Payment completed: In payment pending state, the customer is required to pay up the expenses for the service.",
+    "Lifted_NL": "always when a customer rejects a quotation for a complaint c, then c's state becomes 'abandoned'",
+    "Formal_Spec": {
+      "LABEL": "CUSTOMER_REJECT_QUOTATION",
+      "Precondition": "cust ∈ dom(U) ∧ U[cust].role = 'customer' ∧ c ∈ dom(U) ∧ U[c].type = 'complaint' ∧ U[c].customer = cust ∧ U[c].status = 'quotation raised'",
+      "Function": "reject_quotation(customerID: cust, complaintID: c) → 200 OK",
+      "Postcondition": "U' = U with U'[c].status = 'abandoned'"
+    }
+  },
+  {
+    "Source_NL": "• Done: Once payment is done, the complaint reaches its logical conclusion.",
+    "Lifted_NL": "always when a customer cancels a complaint c, then c's state becomes 'cancelled'",
+    "Formal_Spec": {
+      "LABEL": "CUSTOMER_CANCEL_COMPLAINT",
+      "Precondition": "cust ∈ dom(U) ∧ U[cust].role = 'customer' ∧ c ∈ dom(U) ∧ U[c].type = 'complaint' ∧ U[c].customer = cust ∧ U[c].status ≠ 'under execution'",
+      "Function": "cancel_complaint(customerID: cust, complaintID: c) → 200 OK",
+      "Postcondition": "U' = U with U'[c].status = 'cancelled'"
+    }
+  },
+  {
+    "Source_NL": "• Abandoned: When the quotation is raised, the customer may find it unaffordable and reject it.",
+    "Lifted_NL": "always if a spare part p is required for a service s AND p is not available, then p must be procured",
+    "Formal_Spec": {
+      "LABEL": "PROCURE_SPARE_PART",
+      "Precondition": "s ∈ dom(U) ∧ U[s].type = 'service' ∧ sp ∈ U[s].required_parts ∧ U[sp].is_available = false",
+      "Function": "procure_spare_part(serviceID: s, sparePartID: sp) → 201 Created",
+      "Postcondition": "∃ pr ∈ dom(U') ∖ dom(U). (U'[pr].type = 'procurement_request' ∧ U'[pr].part = sp)"
+    }
+  },
+  {
+    "Source_NL": "This will take the complaint to the abandoned state.",
+    "Lifted_NL": "always when a plumber orders a spare part sp from company stores, then the cost of sp is automatically added to the invoice",
+    "Formal_Spec": {
+      "LABEL": "PLUMBER_ORDER_SPARE_PART",
+      "Precondition": "p ∈ dom(U) ∧ U[p].role = 'plumber' ∧ c ∈ dom(U) ∧ U[c].type = 'complaint' ∧ sp ∈ U[c].required_parts ∧ U[c].part_orders[sp].approved = true",
+      "Function": "order_spare_part(plumberID: p, complaintID: c, sparePartID: sp) → 200 OK",
+      "Postcondition": "U' = U with U'[c].billAmount = U[c].billAmount + U[sp].cost"
+    }
+  },
+  {
+    "Source_NL": "• Cancelled: Before the plumber starts executing a particular task, the customer has the freedom to cancel the complaint.",
+    "Lifted_NL": "always a plumber p can purchase a spare part sp AND then raise a reimbursement request to the company for sp",
+    "Formal_Spec": {
+      "LABEL": "RAISE_REIMBURSEMENT_REQUEST",
+      "Precondition": "p ∈ dom(U) ∧ U[p].role = 'plumber'",
+      "Function": "raise_reimbursement(plumberID: p, sparePartID: sp, purchaseProof: proof) → 201 Created",
+      "Postcondition": "∃ r ∈ dom(U') ∖ dom(U). (U'[r].type = 'reimbursement_request' ∧ U'[r].plumber = p ∧ U'[r].part = sp ∧ U'[r].status = 'pending')"
+    }
+  },
+  {
+    "Source_NL": "If so done, the complaint reaches a cancelled state.",
+    "Lifted_NL": "always a company c releases money for a reimbursement request r only if c has verified that the customer has approved the purchase for r",
+    "Formal_Spec": {
+      "LABEL": "RELEASE_REIMBURSEMENT_FUNDS",
+      "Precondition": "m ∈ dom(U) ∧ U[m].role = 'manager' ∧ r ∈ dom(U) ∧ U[r].type = 'reimbursement_request' ∧ U[r].customer_approval = true ∧ U[r].status = 'approved'",
+      "Function": "release_reimbursement(managerID: m, requestID: r) → 200 OK",
+      "Postcondition": "U' = U with U'[r].status = 'paid'"
+    }
+  },
+  {
+    "Source_NL": "The ovals enclosed within dotted boxes are those for which the Con-do-it application must have additional features.",
+    "Lifted_NL": "always when a part is purchased through the company, the company first verifies customer approval AND then orders the part on behalf of the plumber",
+    "Formal_Spec": {
+      "LABEL": "COMPANY_PURCHASE_SPARE_PART",
+      "Precondition": "m ∈ dom(U) ∧ U[m].role = 'manager' ∧ c ∈ dom(U) ∧ U[c].type = 'complaint' ∧ sp ∈ U[c].required_parts ∧ U[c].part_orders[sp].approved = true",
+      "Function": "purchase_part_for_plumber(managerID: m, complaintID: c, sparePartID: sp) → 200 OK",
+      "Postcondition": "U' = U with U'[sp].order_status = 'ordered'"
+    }
+  },
+  {
+    "Source_NL": "Customer purchase is beyond the purview of the application.",
+    "Lifted_NL": "always for an FOC part, a plumber p seeks approval from a manager m by submitting proof",
+    "Formal_Spec": {
+      "LABEL": "SEEK_FOC_PART_APPROVAL",
+      "Precondition": "p ∈ dom(U) ∧ U[p].role = 'plumber' ∧ sp ∈ dom(U) ∧ U[sp].type = 'spare_part' ∧ U[sp].is_foc = true",
+      "Function": "request_foc_part_approval(plumberID: p, sparePartID: sp, managerID: m, proof: pf) → 201 Created",
+      "Postcondition": "∃ focr ∈ dom(U') ∖ dom(U). (U'[focr].type = 'foc_request' ∧ U'[focr].plumber = p ∧ U'[focr].part = sp ∧ U'[focr].status = 'pending_approval')"
+    }
+  },
+  {
+    "Source_NL": "If a spare part/component required for a specific service is not available immediately, it would have to be procured.",
+    "Lifted_NL": "always for a chargeable part, a plumber p generates a quote",
+    "Formal_Spec": {
+      "LABEL": "GENERATE_QUOTE_FOR_CHARGEABLE_PART",
+      "Precondition": "p ∈ dom(U) ∧ U[p].role = 'plumber' ∧ c ∈ dom(U) ∧ U[c].type = 'complaint' ∧ sp ∈ U[c].required_parts ∧ U[sp].is_foc = false",
+      "Function": "generate_part_quote(plumberID: p, complaintID: c, sparePartID: sp, quoteDetails: qd) → 200 OK",
+      "Postcondition": "U' = U with U'[c].part_quotations[sp] = qd"
+    }
+  },
+  {
+    "Source_NL": "In this condition, the plumber can order these from the company stores after taking approval from the customer.",
+    "Lifted_NL": "always a plumber p is incentivized for a sale only if the sale is of an APPL product and p uploads a valid invoice",
+    "Formal_Spec": {
+      "LABEL": "CLAIM_INCENTIVE_FOR_APPL_SALE",
+      "Precondition": "p ∈ dom(U) ∧ U[p].role = 'plumber' ∧ c ∈ dom(U) ∧ U[c].type = 'complaint' ∧ ∃ sp ∈ U[c].parts_used. (U[sp].brand = 'APPL')",
+      "Function": "claim_incentive(plumberID: p, complaintID: c, invoice: inv) → 200 OK",
+      "Postcondition": "U' = U with U'[p].incentive_balance = U[p].incentive_balance + calculate_incentive(c)"
+    }
+  }
+]
