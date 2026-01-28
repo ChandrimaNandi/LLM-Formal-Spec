@@ -1,0 +1,545 @@
+Operation: INVITE_USER_PRIVILEGE_OK
+Preconditions:
+The inviting user 'u' must exist in the system.
+The privilege level of user 'u' must be greater than the privilege level 'p' being assigned.
+Function:
+invite_user(inviterID: u, invitee_email: i, privilege_level: p) → 201 Created
+Postconditions:
+A new invitation is created in the set of invitations.
+
+Operation: INVITE_USER_PRIVILEGE_OK
+Preconditions:
+The inviting user 'u' must exist in the system.
+The privilege level of user 'u' must be greater than the privilege level 'p' being assigned.
+Function:
+invite_user(inviterID: u, invitee_email: i, privilege_level: p) → 201 Created
+Postconditions:
+The 'inviter' for the new invitation is set to the user 'u'.
+
+Operation: INVITE_USER_PRIVILEGE_OK
+Preconditions:
+The inviting user 'u' must exist in the system.
+The privilege level of user 'u' must be greater than the privilege level 'p' being assigned.
+Function:
+invite_user(inviterID: u, invitee_email: i, privilege_level: p) → 201 Created
+Postconditions:
+The 'invitee_email' for the new invitation is set to 'i'.
+
+Operation: INVITE_USER_PRIVILEGE_OK
+Preconditions:
+The inviting user 'u' must exist in the system.
+The privilege level of user 'u' must be greater than the privilege level 'p' being assigned.
+Function:
+invite_user(inviterID: u, invitee_email: i, privilege_level: p) → 201 Created
+Postconditions:
+The 'privilege_level' for the new invitation is set to 'p'.
+
+Operation: DELETE_ACCOUNT_PRIVILEGE_OK
+Preconditions:
+The deleting user 'u' must exist in the system.
+The account 'a' to be deleted must exist in the system.
+The privilege level of user 'u' must be greater than the privilege level of the user of account 'a'.
+Function:
+delete_account(deleterID: u, accountID: a) → 200 OK
+Postconditions:
+The set of users in the system is updated by removing account 'a'.
+
+Operation: CUSTOMER_CAN_RAISE_COMPLAINT
+Preconditions:
+The user 'c' must exist in the system.
+The role of user 'c' must be 'customer'.
+Function:
+raise_complaint(customerID: c, details: d) → 201 Created
+Postconditions:
+A new complaint is created and added to the set of complaints, with its customerID set to 'c'.
+
+Operation: CUSTOMER_CAN_APPROVE_QUOTATION
+Preconditions:
+The complaint 'c' must exist in the set of complaints.
+The status of complaint 'c' must be 'processing'.
+The customer 'cust' must be the customer associated with complaint 'c'.
+The quotation status for complaint 'c' must be 'pending'.
+Function:
+approve_quotation(customerID: cust, complaintID: c) → 200 OK
+Postconditions:
+The state of complaint 'c' is updated to set its quotation status to 'approved'. All other complaints remain unchanged.
+
+Operation: MUST_BE_SIGNED_IN
+Preconditions:
+The user 'u' must have an active session (be signed in).
+Function:
+perform_protected_action(userID: u, details: d) → 200 OK
+Postconditions:
+The state of the user 'u' reflects the successful completion of the action.
+
+Operation: PLUMBER_VIEW_ASSIGNED_COMPLAINT_OK
+Preconditions:
+The user 'p' must exist in the system and have the role of 'plumber'.
+The complaint 'c' must exist in the set of complaints.
+The complaint 'c' must be assigned to the plumber 'p'.
+Function:
+view_complaint(plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+The state of all users remains unchanged.
+The state of all complaints remains unchanged.
+
+Operation: PLUMBER_RESPOND_TO_COMPLAINT_OK
+Preconditions:
+The user 'p' must exist in the system and have the role of 'plumber'.
+The complaint 'c' must exist in the set of complaints.
+The status of complaint 'c' must be 'active'.
+The complaint 'c' must be assigned to the plumber 'p'.
+Function:
+respond_to_complaint(plumberID: p, complaintID: c, response: r) → 200 OK
+Postconditions:
+The state of complaint 'c' is updated to include the plumber's response 'r'. All other complaints remain unchanged.
+
+Operation: PLUMBER_CAN_ORDER_SPARES
+Preconditions:
+The user 'p' must exist in the system and have the role of 'plumber'.
+Function:
+order_spares(plumberID: p, spare_parts: s) → 201 Created
+Postconditions:
+A new order is created in the set of orders.
+
+Operation: PLUMBER_CAN_ORDER_SPARES
+Preconditions:
+The user 'p' must exist in the system and have the role of 'plumber'.
+Function:
+order_spares(plumberID: p, spare_parts: s) → 201 Created
+Postconditions:
+The 'plumberID' for the new order is set to 'p'.
+
+Operation: PLUMBER_CAN_ORDER_SPARES
+Preconditions:
+The user 'p' must exist in the system and have the role of 'plumber'.
+Function:
+order_spares(plumberID: p, spare_parts: s) → 201 Created
+Postconditions:
+The 'parts' for the new order are set to the provided spare parts 's'.
+
+Operation: PLUMBER_REQUEST_SPARES_APPROVAL_OK
+Preconditions:
+The user 'p' must exist in the system and have the role of 'plumber'.
+The complaint 'complaint' must exist in the set of complaints.
+The complaint 'complaint' must be assigned to plumber 'p'.
+The customer associated with the complaint 'complaint' is 'c'.
+Function:
+request_spares_approval(plumberID: p, complaintID: complaint, spares_list: s) → 200 OK
+Postconditions:
+The state of the complaint 'complaint' is updated to set its spares approval status to 'pending'. All other complaints remain unchanged.
+
+Operation: CHECKOUT_SPARES_CUSTOMER_CONSENT_OK
+Preconditions:
+The user 'p' must exist in the system and have the role of 'plumber'.
+The complaint 'c' must exist in the set of complaints.
+The complaint 'c' must be assigned to plumber 'p'.
+The spares approval status for complaint 'c' must be 'approved'.
+Function:
+checkout_spares(plumberID: p, complaintID: c, spares: s) → 200 OK
+Postconditions:
+The warehouse stock is updated by subtracting the checked-out spares 's'.
+
+Operation: PLUMBER_FEATURE_ACCESS_OK
+Preconditions:
+The user 'u' must exist in the system and have the role of 'plumber'.
+Function:
+access_plumber_feature(userID: u, feature_details: d) → 200 OK
+Postconditions:
+The state of all users remains unchanged.
+
+Operation: SIGNUP_PLUMBER_DETAILS_REQUIRED
+Preconditions:
+The provided details must include specialties and other required details.
+No existing user with the role 'plumber' has the same email as in the provided details.
+Function:
+signup_plumber(details: d) → 201 Created
+Postconditions:
+A new user is created and added to the system.
+
+Operation: SIGNUP_PLUMBER_DETAILS_REQUIRED
+Preconditions:
+The provided details must include specialties and other required details.
+No existing user with the role 'plumber' has the same email as in the provided details.
+Function:
+signup_plumber(details: d) → 201 Created
+Postconditions:
+The role of the new user is set to 'plumber'.
+
+Operation: SIGNUP_PLUMBER_DETAILS_REQUIRED
+Preconditions:
+The provided details must include specialties and other required details.
+No existing user with the role 'plumber' has the same email as in the provided details.
+Function:
+signup_plumber(details: d) → 201 Created
+Postconditions:
+The 'specialties' for the new user are set from the provided details.
+
+Operation: SIGNUP_PLUMBER_SETS_PENDING_STATUS
+Preconditions:
+No existing user with the role 'plumber' has the same email as in the provided details.
+Function:
+signup_plumber(details: d) → 201 Created
+Postconditions:
+A new user is created and added to the system.
+
+Operation: SIGNUP_PLUMBER_SETS_PENDING_STATUS
+Preconditions:
+No existing user with the role 'plumber' has the same email as in the provided details.
+Function:
+signup_plumber(details: d) → 201 Created
+Postconditions:
+The 'email' for the new user is set from the provided details.
+
+Operation: SIGNUP_PLUMBER_SETS_PENDING_STATUS
+Preconditions:
+No existing user with the role 'plumber' has the same email as in the provided details.
+Function:
+signup_plumber(details: d) → 201 Created
+Postconditions:
+The 'role' for the new user is set to 'plumber'.
+
+Operation: SIGNUP_PLUMBER_SETS_PENDING_STATUS
+Preconditions:
+No existing user with the role 'plumber' has the same email as in the provided details.
+Function:
+signup_plumber(details: d) → 201 Created
+Postconditions:
+The 'status' for the new user is set to 'pending verification'.
+
+Operation: INDUCT_PLUMBER_SUITABLE_OK
+Preconditions:
+The user 'm' must exist in the system and have the role of 'manager'.
+The user 'p' must exist in the system and have the role of 'plumber'.
+The verification result for user 'p' must be 'suitable'.
+Function:
+induct_plumber(managerID: m, plumberID: p) → 200 OK
+Postconditions:
+The state of user 'p' is updated to set their status to 'active'. All other users remain unchanged.
+
+Operation: PROCESS_UNSUITABLE_VERIFICATION_OK
+Preconditions:
+The user 'm' must exist in the system and have the role of 'manager'.
+The user 'p' must exist in the system and have the role of 'plumber'.
+The verification result for user 'p' must be 'not suitable'.
+The decision must be either 'requires_training' or 'rejected'.
+Function:
+process_unsuitable_verification(managerID: m, plumberID: p, decision: d) → 200 OK
+Postconditions:
+The state of user 'p' is updated to set their status to the given decision. All other users remain unchanged.
+
+Operation: PLUMBER_REAPPLY_OK
+Preconditions:
+The user 'p' must exist in the system and have the role of 'plumber'.
+The status of user 'p' must be 'dismissed'.
+The user 'p' must meet the conditions for reapplication.
+Function:
+reapply_plumber(plumberID: p) → 200 OK
+Postconditions:
+The state of user 'p' is updated to set their status to 'pending verification'. All other users remain unchanged.
+
+Operation: ASSIGN_COMPLAINT_NOTIFIES_PLUMBER
+Preconditions:
+The user 'm' must exist with the role 'manager'. The user 'p' must exist with the role 'plumber'.
+The complaint 'c' must exist and have a status of 'raised'.
+Function:
+assign_complaint(managerID: m, plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+The assigned plumber for complaint 'c' is set to 'p'.
+
+Operation: ASSIGN_COMPLAINT_NOTIFIES_PLUMBER
+Preconditions:
+The user 'm' must exist with the role 'manager'. The user 'p' must exist with the role 'plumber'.
+The complaint 'c' must exist and have a status of 'raised'.
+Function:
+assign_complaint(managerID: m, plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+A new notification is created.
+
+Operation: ASSIGN_COMPLAINT_NOTIFIES_PLUMBER
+Preconditions:
+The user 'm' must exist with the role 'manager'. The user 'p' must exist with the role 'plumber'.
+The complaint 'c' must exist and have a status of 'raised'.
+Function:
+assign_complaint(managerID: m, plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+The recipient of the new notification is set to the plumber 'p'.
+
+Operation: ASSIGN_COMPLAINT_NOTIFIES_PLUMBER
+Preconditions:
+The user 'm' must exist with the role 'manager'. The user 'p' must exist with the role 'plumber'.
+The complaint 'c' must exist and have a status of 'raised'.
+Function:
+assign_complaint(managerID: m, plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+The complaint ID of the new notification is set to 'c'.
+
+Operation: ASSIGN_COMPLAINT_NOTIFIES_CUSTOMER
+Preconditions:
+The user 'm' must exist with the role 'manager'. The user 'p' must exist with the role 'plumber'.
+The complaint 'c' must exist and have a status of 'raised'.
+Function:
+assign_complaint(managerID: m, plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+The assigned plumber for complaint 'c' is set to 'p'.
+
+Operation: ASSIGN_COMPLAINT_NOTIFIES_CUSTOMER
+Preconditions:
+The user 'm' must exist with the role 'manager'. The user 'p' must exist with the role 'plumber'.
+The complaint 'c' must exist and have a status of 'raised'.
+Function:
+assign_complaint(managerID: m, plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+A new notification is created.
+
+Operation: ASSIGN_COMPLAINT_NOTIFIES_CUSTOMER
+Preconditions:
+The user 'm' must exist with the role 'manager'. The user 'p' must exist with the role 'plumber'.
+The complaint 'c' must exist and have a status of 'raised'.
+Function:
+assign_complaint(managerID: m, plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+The recipient of the new notification is set to the customer associated with complaint 'c'.
+
+Operation: ASSIGN_COMPLAINT_NOTIFIES_CUSTOMER
+Preconditions:
+The user 'm' must exist with the role 'manager'. The user 'p' must exist with the role 'plumber'.
+The complaint 'c' must exist and have a status of 'raised'.
+Function:
+assign_complaint(managerID: m, plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+The content of the new notification includes the details of the assigned plumber 'p'.
+
+Operation: ASSIGN_COMPLAINT_SUGGESTS_SLOTS
+Preconditions:
+The complaint 'c' must exist in the set of complaints.
+The status of complaint 'c' must be 'raised'.
+Function:
+assign_complaint(managerID: m, plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+The state of complaint 'c' is updated to set its assigned plumber to 'p' and to set its suggested slots based on a calculation involving the plumber and the complaint.
+
+Operation: CUSTOMER_SELECT_SLOT_OK
+Preconditions:
+The user 'c' must exist in the system and have the role 'customer'.
+The complaint 'complaint' must exist and be associated with customer 'c'.
+The slot 's' must be one of the suggested slots for the complaint 'complaint'.
+Function:
+select_slot(customerID: c, complaintID: complaint, slot: s) → 200 OK
+Postconditions:
+The state of complaint 'complaint' is updated to set its confirmed slot to 's'. All other complaints remain unchanged.
+
+Operation: REJECT_SLOTS_TRIGGERS_NEW_SUGGESTIONS
+Preconditions:
+The complaint 'complaint' must exist in the set of complaints.
+The customer 'c' must be the customer associated with complaint 'complaint'.
+Function:
+reject_all_slots(customerID: c, complaintID: complaint) → 200 OK
+Postconditions:
+The set of suggested slots for the complaint 'complaint' is updated to a new set of slots.
+
+Operation: REQUEST_NEW_PLUMBER_AND_SLOTS_OK
+Preconditions:
+The complaint 'complaint' must exist in the set of complaints.
+The customer 'c' must be the customer associated with complaint 'complaint'.
+Function:
+request_new_plumber_and_slots(customerID: c, complaintID: complaint) → 200 OK
+Postconditions:
+The assigned plumber for complaint 'complaint' is changed to a new plumber, and the suggested slots are recalculated for the new plumber.
+
+Operation: RAISE_COMPLAINT_OPTIONAL_INFO_OK
+Preconditions:
+The user 'c' must exist in the system and have the role of 'customer'.
+The provided details must contain all essential information for a complaint.
+Function:
+raise_complaint(customerID: c, details: d) → 201 Created
+Postconditions:
+A new complaint is created and added to the set of complaints, with its customerID set to 'c'.
+
+Operation: GENERATE_QUOTATION_POSSIBLE
+Preconditions:
+The user 'a' must exist in the system and have a role of either 'plumber' or 'manager'.
+The complaint 'c' must exist in the set of complaints.
+The status of complaint 'c' must be 'Under examination'.
+Function:
+generate_quotation(actorID: a, complaintID: c, quote_details: qd) → 200 OK
+Postconditions:
+The state of complaint 'c' is updated to set its quotation details to 'qd'.
+
+Operation: GENERATE_QUOTATION_POSSIBLE
+Preconditions:
+The user 'a' must exist in the system and have a role of either 'plumber' or 'manager'.
+The complaint 'c' must exist in the set of complaints.
+The status of complaint 'c' must be 'Under examination'.
+Function:
+generate_quotation(actorID: a, complaintID: c, quote_details: qd) → 200 OK
+Postconditions:
+The quotation status of complaint 'c' is updated to 'pending'.
+
+Operation: FINALIZE_CHARGES_WHEN_COMPLETED_OK
+Preconditions:
+The complaint 'c' must exist in the set of complaints.
+The status of complaint 'c' must be 'completed'.
+Function:
+finalize_charges(actorID: a, complaintID: c) → 200 OK
+Postconditions:
+The final charges for complaint 'c' are calculated and set.
+
+Operation: NO_VISIT_FEE_FOR_WARRANTY
+Preconditions:
+The complaint 'complaint' must exist in the set of complaints.
+The customer associated with the complaint must be an existing customer.
+The complaint 'complaint' must be under warranty.
+Function:
+finalize_charges(actorID: a, complaintID: complaint) → 200 OK
+Postconditions:
+The visit fee component of the final charges for complaint 'complaint' is set to 0.
+
+Operation: VISIT_FEE_FOR_OUTSIDE_CUSTOMER
+Preconditions:
+The complaint 'complaint' must exist in the set of complaints.
+The customer associated with the complaint must not be an existing customer.
+Function:
+finalize_charges(actorID: a, complaintID: complaint) → 200 OK
+Postconditions:
+The visit fee component of the final charges for complaint 'complaint' is set to a value greater than 0.
+
+Operation: REJECT_SERVICE_DUE_TO_COST_OK
+Preconditions:
+The complaint 'c' must exist in the set of complaints.
+The customer 'cust' must be the customer associated with complaint 'c'.
+The quotation status for complaint 'c' must be 'pending'.
+Function:
+reject_service_due_to_cost(customerID: cust, complaintID: c) → 200 OK
+Postconditions:
+The state of complaint 'c' is updated to set its status to 'closed-satisfactory'. All other complaints remain unchanged.
+
+Operation: DEFINE_SERVICE_RATES_OK
+Preconditions:
+The user 'm' must exist in the system and have the role of 'manager'.
+Function:
+define_service_rates(managerID: m, new_rates: r) → 200 OK
+Postconditions:
+The system configuration is updated to set the service rates to the new rates 'r'.
+
+Operation: SIGNUP_REQUIRES_VALID_ROLE
+Preconditions:
+The role in the provided details must be one of 'customer', 'plumber', or 'manager'.
+Function:
+signup(details: d) → 201 Created
+Postconditions:
+A new user is created with the role specified in the details.
+
+Operation: SIGNUP_REQUIRES_EMAIL_AND_PHONE
+Preconditions:
+The provided details must include an email and a phone number.
+Function:
+signup(details: d) → 201 Created
+Postconditions:
+A new user is created in the system.
+
+Operation: SIGNUP_REQUIRES_EMAIL_AND_PHONE
+Preconditions:
+The provided details must include an email and a phone number.
+Function:
+signup(details: d) → 201 Created
+Postconditions:
+The 'email' for the new user is set from the provided details.
+
+Operation: SIGNUP_REQUIRES_EMAIL_AND_PHONE
+Preconditions:
+The provided details must include an email and a phone number.
+Function:
+signup(details: d) → 201 Created
+Postconditions:
+The 'phone' for the new user is set from the provided details.
+
+Operation: SIGNUP_ROLE_DETAILS_UNIQUE
+Preconditions:
+No existing user with the same role has the same email or phone number as in the provided details.
+Function:
+signup(details: d) → 201 Created
+Postconditions:
+The set of users is updated by adding the newly created user.
+
+Operation: SIGNUP_CUSTOMER_IS_ACTIVE
+Preconditions:
+The role in the provided details is 'customer'.
+Function:
+signup(details: d) → 201 Created
+Postconditions:
+A new user is created in the system.
+
+Operation: SIGNUP_CUSTOMER_IS_ACTIVE
+Preconditions:
+The role in the provided details is 'customer'.
+Function:
+signup(details: d) → 201 Created
+Postconditions:
+The 'email' for the new user is set from the provided details.
+
+Operation: SIGNUP_CUSTOMER_IS_ACTIVE
+Preconditions:
+The role in the provided details is 'customer'.
+Function:
+signup(details: d) → 201 Created
+Postconditions:
+The 'role' for the new user is set to 'customer'.
+
+Operation: SIGNUP_CUSTOMER_IS_ACTIVE
+Preconditions:
+The role in the provided details is 'customer'.
+Function:
+signup(details: d) → 201 Created
+Postconditions:
+The 'status' for the new user is set to 'active'.
+
+Operation: SIGNUP_PLUMBER_IS_UNVERIFIED
+Preconditions:
+The role in the provided details is 'plumber'.
+Function:
+signup(details: d) → 201 Created
+Postconditions:
+A new user is created in the system.
+
+Operation: SIGNUP_PLUMBER_IS_UNVERIFIED
+Preconditions:
+The role in the provided details is 'plumber'.
+Function:
+signup(details: d) → 201 Created
+Postconditions:
+The 'email' for the new user is set from the provided details.
+
+Operation: SIGNUP_PLUMBER_IS_UNVERIFIED
+Preconditions:
+The role in the provided details is 'plumber'.
+Function:
+signup(details: d) → 201 Created
+Postconditions:
+The 'role' for the new user is set to 'plumber'.
+
+Operation: SIGNUP_PLUMBER_IS_UNVERIFIED
+Preconditions:
+The role in the provided details is 'plumber'.
+Function:
+signup(details: d) → 201 Created
+Postconditions:
+The 'status' for the new user is set to 'unverified'.
+
+Operation: ACTIVATE_PLUMBER_POST_VERIFICATION_OK
+Preconditions:
+The user 'm' must exist with the role 'manager'.
+The user 'p' must exist with the role 'plumber'.
+The verification status for plumber 'p' must be 'success' or their training status must be 'completed'.
+Function:
+activate_plumber(managerID: m, plumberID: p) → 200 OK
+Postconditions:
+The state of user 'p' is updated to set their status to 'active'. All other users remain unchanged.
+
+Operation: USER_SIGNIN_OK
+Preconditions:
+A user 'u' exists in the system whose credentials can be verified against the provided credentials.
+Function:
+signin(credentials: c) → 200 OK
+Postconditions:
+A new session 's' is created, and its userID is set to the authenticated user 'u'.

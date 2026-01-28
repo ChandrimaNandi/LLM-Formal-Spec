@@ -1,0 +1,1 @@
+removed the strict mode but made some changes in prompt such that vague specs are removed and also some function names can be used again

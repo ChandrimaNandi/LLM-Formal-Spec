@@ -1,0 +1,385 @@
+User-defined types:
+  UserID: An identifier for a user.
+  ComplaintID: An identifier for a complaint.
+  Email: A string representing an email address.
+  Role: A string, one of {'customer', 'plumber', 'manager'}.
+  PrivilegeLevel: An integer representing a user's privilege level.
+  UserDetails: A record containing user information like email, phone, role, specialties.
+  User: A record representing a user, containing fields like `role`, `privilege_level`, `email`, `status`, `verification_result`, `is_existing`.
+  Complaint: A record representing a complaint, containing fields like `customerID`, `status`, `assigned_plumber`, `quotation_status`, `quotation`, `final_charges`, `is_warranty`, `suggested_slots`, `confirmed_slot`.
+  Invitation: A record containing `inviter`, `invitee_email`, `privilege_level`.
+  Order: A record containing `plumberID` and `parts`.
+  Notification: A record containing `recipient`, `complaintID`, `content`.
+  SystemConfig: A record containing system-wide settings like `service_rates`.
+  WarehouseState: A record containing warehouse data like `stock`.
+
+State variables:
+  U: Map[UserID, User]
+  Complaints: Map[ComplaintID, Complaint]
+  Invitations: Set[Invitation]
+  Orders: Set[Order]
+  Notifications: Set[Notification]
+  Warehouse: WarehouseState
+  SystemConfig: SystemConfig
+
+---
+Operation: INVITE_USER_PRIVILEGE_OK
+Preconditions:
+  u in dom(U) and U[u].privilege_level > p
+
+Function:
+  invite_user(inviterID: u, invitee_email: i, privilege_level: p) → Void [201]
+
+Postconditions:
+  exists inv in Invitations' where inv.inviter = u and inv.invitee_email = i and inv.privilege_level = p
+
+---
+Operation: DELETE_ACCOUNT_PRIVILEGE_OK
+Preconditions:
+  u in dom(U) and a in dom(U) and U[u].privilege_level > U[a].privilege_level
+
+Function:
+  delete_account(deleterID: u, accountID: a) → Void [200]
+
+Postconditions:
+  dom(U') = dom(U) - {a}
+
+---
+Operation: CUSTOMER_CAN_RAISE_COMPLAINT
+Preconditions:
+  c in dom(U) and U[c].role = 'customer'
+
+Function:
+  raise_complaint(customerID: c, details: d) → Void [201]
+
+Postconditions:
+  exists new_complaint in dom(Complaints') where Complaints'[new_complaint].customerID = c
+
+---
+Operation: CUSTOMER_CAN_APPROVE_QUOTATION
+Preconditions:
+  c in dom(Complaints) and Complaints[c].status = 'processing' and cust = Complaints[c].customerID and Complaints[c].quotation_status = 'pending'
+
+Function:
+  approve_quotation(customerID: cust, complaintID: c) → Void [200]
+
+Postconditions:
+  Complaints' = Complaints with Complaints'[c].quotation_status = 'approved'
+
+---
+Operation: PLUMBER_VIEW_ASSIGNED_COMPLAINT_OK
+Preconditions:
+  p in dom(U) and U[p].role = 'plumber' and c in dom(Complaints) and Complaints[c].assigned_plumber = p
+
+Function:
+  view_complaint(plumberID: p, complaintID: c) → Complaint [200]
+
+Postconditions:
+  U' = U and Complaints' = Complaints
+
+---
+Operation: PLUMBER_RESPOND_TO_COMPLAINT_OK
+Preconditions:
+  p in dom(U) and U[p].role = 'plumber' and c in dom(Complaints) and Complaints[c].status = 'active' and Complaints[c].assigned_plumber = p
+
+Function:
+  respond_to_complaint(plumberID: p, complaintID: c, response: r) → Void [200]
+
+Postconditions:
+  Complaints' = Complaints with Complaints'[c].plumber_response = r
+
+---
+Operation: PLUMBER_CAN_ORDER_SPARES
+Preconditions:
+  p in dom(U) and U[p].role = 'plumber'
+
+Function:
+  order_spares(plumberID: p, spare_parts: s) → Void [201]
+
+Postconditions:
+  exists new_order in Orders' where new_order.plumberID = p and new_order.parts = s
+
+---
+Operation: PLUMBER_REQUEST_SPARES_APPROVAL_OK
+Preconditions:
+  p in dom(U) and U[p].role = 'plumber' and complaint in dom(Complaints) and Complaints[complaint].assigned_plumber = p
+
+Function:
+  request_spares_approval(plumberID: p, complaintID: complaint, spares_list: s) → Void [200]
+
+Postconditions:
+  Complaints' = Complaints with Complaints'[complaint].spares_approval_status = 'pending'
+
+---
+Operation: CHECKOUT_SPARES_CUSTOMER_CONSENT_OK
+Preconditions:
+  p in dom(U) and U[p].role = 'plumber' and c in dom(Complaints) and Complaints[c].assigned_plumber = p and Complaints[c].spares_approval_status = 'approved'
+
+Function:
+  checkout_spares(plumberID: p, complaintID: c, spares: s) → Void [200]
+
+Postconditions:
+  Warehouse'.stock = Warehouse.stock - s
+
+---
+Operation: PLUMBER_FEATURE_ACCESS_OK
+Preconditions:
+  u in dom(U) and U[u].role = 'plumber'
+
+Function:
+  access_plumber_feature(userID: u, feature_details: d) → Void [200]
+
+Postconditions:
+  U' = U
+
+---
+Operation: SIGNUP_PLUMBER_DETAILS_REQUIRED
+Preconditions:
+  details.specialties != NULL and details.other_details != NULL
+  not (exists u in dom(U) where U[u].email = details.email and U[u].role = 'plumber')
+
+Function:
+  signup_plumber(details: d) → Void [201]
+
+Postconditions:
+  exists u_new in dom(U') where U'[u_new].role = 'plumber' and U'[u_new].specialties = details.specialties
+
+---
+Operation: SIGNUP_PLUMBER_SETS_PENDING_STATUS
+Preconditions:
+  not (exists u in dom(U) where U[u].email = details.email and U[u].role = 'plumber')
+
+Function:
+  signup_plumber(details: d) → Void [201]
+
+Postconditions:
+  exists u_new in dom(U') where U'[u_new].email = details.email and U'[u_new].role = 'plumber' and U'[u_new].status = 'pending verification'
+
+---
+Operation: INDUCT_PLUMBER_SUITABLE_OK
+Preconditions:
+  m in dom(U) and U[m].role = 'manager' and p in dom(U) and U[p].role = 'plumber' and U[p].verification_result = 'suitable'
+
+Function:
+  induct_plumber(managerID: m, plumberID: p) → Void [200]
+
+Postconditions:
+  U' = U with U'[p].status = 'active'
+
+---
+Operation: PROCESS_UNSUITABLE_VERIFICATION_OK
+Preconditions:
+  m in dom(U) and U[m].role = 'manager' and p in dom(U) and U[p].role = 'plumber' and U[p].verification_result = 'not suitable' and d in {'requires_training', 'rejected'}
+
+Function:
+  process_unsuitable_verification(managerID: m, plumberID: p, decision: d) → Void [200]
+
+Postconditions:
+  U' = U with U'[p].status = d
+
+---
+Operation: PLUMBER_REAPPLY_OK
+Preconditions:
+  p in dom(U) and U[p].role = 'plumber' and U[p].status = 'dismissed' and meets_reapply_conditions(U[p])
+
+Function:
+  reapply_plumber(plumberID: p) → Void [200]
+
+Postconditions:
+  U' = U with U'[p].status = 'pending verification'
+
+---
+Operation: ASSIGN_COMPLAINT_NOTIFIES_PLUMBER
+Preconditions:
+  m in dom(U) and U[m].role = 'manager'
+  p in dom(U) and U[p].role = 'plumber'
+  c in dom(Complaints) and Complaints[c].status = 'raised'
+
+Function:
+  assign_complaint(managerID: m, plumberID: p, complaintID: c) → Void [200]
+
+Postconditions:
+  Complaints'[c].assigned_plumber = p
+  exists n in Notifications' where n.recipient = p and n.complaintID = c
+
+---
+Operation: ASSIGN_COMPLAINT_NOTIFIES_CUSTOMER
+Preconditions:
+  m in dom(U) and U[m].role = 'manager'
+  p in dom(U) and U[p].role = 'plumber'
+  c in dom(Complaints) and Complaints[c].status = 'raised'
+
+Function:
+  assign_complaint(managerID: m, plumberID: p, complaintID: c) → Void [200]
+
+Postconditions:
+  Complaints'[c].assigned_plumber = p
+  exists n in Notifications' where n.recipient = Complaints[c].customerID and n.content = U[p].details
+
+---
+Operation: ASSIGN_COMPLAINT_SUGGESTS_SLOTS
+Preconditions:
+  m in dom(U) and U[m].role = 'manager'
+  p in dom(U) and U[p].role = 'plumber'
+  c in dom(Complaints) and Complaints[c].status = 'raised'
+
+Function:
+  assign_complaint(managerID: m, plumberID: p, complaintID: c) → Void [200]
+
+Postconditions:
+  Complaints'[c].assigned_plumber = p
+  Complaints'[c].suggested_slots = calculate_slots(p, c)
+
+---
+Operation: CUSTOMER_SELECT_SLOT_OK
+Preconditions:
+  c in dom(U) and U[c].role = 'customer' and complaint in dom(Complaints) and Complaints[complaint].customerID = c and s in Complaints[complaint].suggested_slots
+
+Function:
+  select_slot(customerID: c, complaintID: complaint, slot: s) → Void [200]
+
+Postconditions:
+  Complaints' = Complaints with Complaints'[complaint].confirmed_slot = s
+
+---
+Operation: REJECT_SLOTS_TRIGGERS_NEW_SUGGESTIONS
+Preconditions:
+  complaint in dom(Complaints) and Complaints[complaint].customerID = c
+
+Function:
+  reject_all_slots(customerID: c, complaintID: complaint) → Void [200]
+
+Postconditions:
+  Complaints'[complaint].suggested_slots != Complaints[complaint].suggested_slots
+
+---
+Operation: REQUEST_NEW_PLUMBER_AND_SLOTS_OK
+Preconditions:
+  complaint in dom(Complaints) and Complaints[complaint].customerID = c
+
+Function:
+  request_new_plumber_and_slots(customerID: c, complaintID: complaint) → Void [200]
+
+Postconditions:
+  Complaints'[complaint].assigned_plumber != Complaints[complaint].assigned_plumber
+  Complaints'[complaint].suggested_slots = calculate_slots(Complaints'[complaint].assigned_plumber, complaint)
+
+---
+Operation: RAISE_COMPLAINT_OPTIONAL_INFO_OK
+Preconditions:
+  c in dom(U) and U[c].role = 'customer' and has_essential_info(details)
+
+Function:
+  raise_complaint(customerID: c, details: d) → Void [201]
+
+Postconditions:
+  exists new_complaint in dom(Complaints') where Complaints'[new_complaint].customerID = c
+
+---
+Operation: GENERATE_QUOTATION_POSSIBLE
+Preconditions:
+  a in dom(U) and (U[a].role = 'plumber' or U[a].role = 'manager')
+  c in dom(Complaints) and Complaints[c].status = 'Under examination'
+
+Function:
+  generate_quotation(actorID: a, complaintID: c, quote_details: qd) → Void [200]
+
+Postconditions:
+  Complaints'[c].quotation = qd
+  Complaints'[c].quotation_status = 'pending'
+
+---
+Operation: FINALIZE_CHARGES_WHEN_COMPLETED_OK
+Preconditions:
+  c in dom(Complaints) and Complaints[c].status = 'completed'
+
+Function:
+  finalize_charges(actorID: a, complaintID: c) → Void [200]
+
+Postconditions:
+  Complaints'[c].final_charges = calculate_charges(c)
+
+---
+Operation: NO_VISIT_FEE_FOR_WARRANTY
+Preconditions:
+  complaint in dom(Complaints)
+  U[Complaints[complaint].customerID].is_existing = true
+  Complaints[complaint].is_warranty = true
+
+Function:
+  finalize_charges(actorID: a, complaintID: complaint) → Void [200]
+
+Postconditions:
+  Complaints'[complaint].final_charges = calculate_charges(complaint)
+  Complaints'[complaint].final_charges.visit_fee = 0
+
+---
+Operation: VISIT_FEE_FOR_OUTSIDE_CUSTOMER
+Preconditions:
+  complaint in dom(Complaints) and U[Complaints[complaint].customerID].is_existing = false
+
+Function:
+  finalize_charges(actorID: a, complaintID: complaint) → Void [200]
+
+Postconditions:
+  Complaints'[complaint].final_charges = calculate_charges(complaint)
+  Complaints'[complaint].final_charges.visit_fee > 0
+
+---
+Operation: REJECT_SERVICE_DUE_TO_COST_OK
+Preconditions:
+  c in dom(Complaints) and Complaints[c].customerID = cust and Complaints[c].quotation_status = 'pending'
+
+Function:
+  reject_service_due_to_cost(customerID: cust, complaintID: c) → Void [200]
+
+Postconditions:
+  Complaints' = Complaints with Complaints'[c].status = 'closed-satisfactory'
+
+---
+Operation: DEFINE_SERVICE_RATES_OK
+Preconditions:
+  m in dom(U) and U[m].role = 'manager'
+
+Function:
+  define_service_rates(managerID: m, new_rates: r) → Void [200]
+
+Postconditions:
+  SystemConfig'.service_rates = r
+
+---
+Operation: SIGNUP_REQUIRES_VALID_ROLE
+Preconditions:
+  details.role in {'customer', 'plumber', 'manager'}
+
+Function:
+  signup(details: d) → Void [201]
+
+Postconditions:
+  exists u_new in dom(U') where U'[u_new].role = details.role
+
+---
+Operation: SIGNUP_REQUIRES_EMAIL_AND_PHONE
+Preconditions:
+  details.email != NULL and details.phone != NULL
+
+Function:
+  signup(details: d) → Void [201]
+
+Postconditions:
+  exists u_new in dom(U') where U'[u_new].email = details.email and U'[u_new].phone = details.phone
+
+---
+Operation: SIGNUP_ROLE_DETAILS_UNIQUE
+Preconditions:
+  not (exists u in dom(U) where U[u].role = details.role and (U[u].email = details.email or U[u].phone = details.phone))
+
+Function:
+  signup(details: d) → Void [201]
+
+Postconditions:
+  exists u_new such that u_new not in dom(U) and dom(U') = dom(U) union {u_new}
+
+---
+REMOVED_SPECS: 2
+REMOVED_LABELS: [MUST_BE_SIGNED_IN, SIGNUP_CUSTOMER_IS_ACTIVE]

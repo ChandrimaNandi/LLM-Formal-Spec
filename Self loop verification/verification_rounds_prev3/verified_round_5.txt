@@ -1,0 +1,559 @@
+Operation: INVITE_USER_PRIVILEGE_OK
+Preconditions:
+User `u` is a member of the set of users.
+The privilege level of user `u` is greater than `p`.
+Function:
+invite_user(inviterID: u, invitee_email: i, privilege_level: p) → 201 Created
+Postconditions:
+The set of invitations is updated to include a new invitation.
+
+Operation: INVITE_USER_PRIVILEGE_OK
+Preconditions:
+User `u` is a member of the set of users.
+The privilege level of user `u` is greater than `p`.
+Function:
+invite_user(inviterID: u, invitee_email: i, privilege_level: p) → 201 Created
+Postconditions:
+The inviter for the new invitation is set to user `u`.
+
+Operation: INVITE_USER_PRIVILEGE_OK
+Preconditions:
+User `u` is a member of the set of users.
+The privilege level of user `u` is greater than `p`.
+Function:
+invite_user(inviterID: u, invitee_email: i, privilege_level: p) → 201 Created
+Postconditions:
+The invitee email for the new invitation is set to `i`.
+
+Operation: INVITE_USER_PRIVILEGE_OK
+Preconditions:
+User `u` is a member of the set of users.
+The privilege level of user `u` is greater than `p`.
+Function:
+invite_user(inviterID: u, invitee_email: i, privilege_level: p) → 201 Created
+Postconditions:
+The privilege level for the new invitation is set to `p`.
+
+Operation: DELETE_ACCOUNT_PRIVILEGE_OK
+Preconditions:
+User `u` is a member of the set of users.
+Account `a` is a member of the set of users.
+The privilege level of user `u` is greater than the privilege level of the user of account `a`.
+Function:
+delete_account(deleterID: u, accountID: a) → 200 OK
+Postconditions:
+The user account `a` is removed from the set of users.
+
+Operation: CUSTOMER_CAN_RAISE_COMPLAINT
+Preconditions:
+User `c` is a member of the set of users.
+The role of user `c` is 'customer'.
+Function:
+raise_complaint(customerID: c, details: d) → 201 Created
+Postconditions:
+A new complaint is added to the set of complaints, with its customer ID set to `c`.
+
+Operation: CUSTOMER_CAN_APPROVE_QUOTATION
+Preconditions:
+Complaint `c` is a member of the set of complaints.
+The status of complaint `c` is 'processing'.
+User `cust` is the customer associated with complaint `c`.
+The quotation status for complaint `c` is 'pending'.
+Function:
+approve_quotation(customerID: cust, complaintID: c) → 200 OK
+Postconditions:
+The quotation status for complaint `c` is updated to 'approved'.
+
+Operation: MUST_BE_SIGNED_IN
+Preconditions:
+User `u` has an active session in the set of sessions.
+Function:
+perform_protected_action(userID: u, details: d) → 200 OK
+Postconditions:
+The state related to the protected action is updated successfully.
+
+Operation: PLUMBER_VIEW_ASSIGNED_COMPLAINT_OK
+Preconditions:
+User `p` is a member of the set of users and has the role 'plumber'.
+Complaint `c` is a member of the set of complaints.
+Complaint `c` is assigned to plumber `p`.
+Function:
+view_complaint(plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+The set of users remains unchanged.
+The set of complaints remains unchanged.
+
+Operation: PLUMBER_RESPOND_TO_COMPLAINT_OK
+Preconditions:
+User `p` is a member of the set of users and has the role 'plumber'.
+Complaint `c` is a member of the set of complaints.
+The status of complaint `c` is 'active'.
+Complaint `c` is assigned to plumber `p`.
+Function:
+respond_to_complaint(plumberID: p, complaintID: c, response: r) → 200 OK
+Postconditions:
+The response field for complaint `c` is updated with the response `r`.
+
+Operation: PLUMBER_CAN_ORDER_SPARES
+Preconditions:
+User `p` is a member of the set of users and has the role 'plumber'.
+Function:
+order_spares(plumberID: p, spare_parts: s) → 201 Created
+Postconditions:
+A new order is added to the set of orders.
+
+Operation: PLUMBER_CAN_ORDER_SPARES
+Preconditions:
+User `p` is a member of the set of users and has the role 'plumber'.
+Function:
+order_spares(plumberID: p, spare_parts: s) → 201 Created
+Postconditions:
+The plumber ID for the new order is set to `p`.
+
+Operation: PLUMBER_CAN_ORDER_SPARES
+Preconditions:
+User `p` is a member of the set of users and has the role 'plumber'.
+Function:
+order_spares(plumberID: p, spare_parts: s) → 201 Created
+Postconditions:
+The parts for the new order are set to `s`.
+
+Operation: PLUMBER_REQUEST_SPARES_APPROVAL_OK
+Preconditions:
+User `p` is a member of the set of users and has the role 'plumber'.
+Complaint `complaint` is a member of the set of complaints.
+Complaint `complaint` is assigned to plumber `p`.
+Function:
+request_spares_approval(plumberID: p, complaintID: complaint, spares_list: s) → 200 OK
+Postconditions:
+The spares approval status for complaint `complaint` is updated to 'pending'.
+
+Operation: CHECKOUT_SPARES_CUSTOMER_CONSENT_OK
+Preconditions:
+User `p` is a member of the set of users and has the role 'plumber'.
+Complaint `c` is a member of the set of complaints.
+Complaint `c` is assigned to plumber `p`.
+The spares approval status for complaint `c` is 'approved'.
+Function:
+checkout_spares(plumberID: p, complaintID: c, spares: s) → 200 OK
+Postconditions:
+The warehouse stock is updated by subtracting the spares `s`.
+
+Operation: PLUMBER_FEATURE_ACCESS_OK
+Preconditions:
+User `u` is a member of the set of users and has the role 'plumber'.
+Function:
+access_plumber_feature(userID: u, feature_details: d) → 200 OK
+Postconditions:
+The set of users remains unchanged.
+
+Operation: SIGNUP_PLUMBER_DETAILS_REQUIRED
+Preconditions:
+The provided details `d` include specialties.
+No user exists in the set of users with the role 'plumber' and the same email as in details `d`.
+Function:
+signup_plumber(details: d) → 201 Created
+Postconditions:
+A new user is added to the set of users.
+
+Operation: SIGNUP_PLUMBER_DETAILS_REQUIRED
+Preconditions:
+The provided details `d` include specialties.
+No user exists in the set of users with the role 'plumber' and the same email as in details `d`.
+Function:
+signup_plumber(details: d) → 201 Created
+Postconditions:
+The role of the new user is set to 'plumber'.
+
+Operation: SIGNUP_PLUMBER_DETAILS_REQUIRED
+Preconditions:
+The provided details `d` include specialties.
+No user exists in the set of users with the role 'plumber' and the same email as in details `d`.
+Function:
+signup_plumber(details: d) → 201 Created
+Postconditions:
+The specialties for the new user are set from the details `d`.
+
+Operation: SIGNUP_PLUMBER_SETS_PENDING_STATUS
+Preconditions:
+No user exists in the set of users with the role 'plumber' and the same email as in details `d`.
+Function:
+signup_plumber(details: d) → 201 Created
+Postconditions:
+A new user is added to the set of users.
+
+Operation: SIGNUP_PLUMBER_SETS_PENDING_STATUS
+Preconditions:
+No user exists in the set of users with the role 'plumber' and the same email as in details `d`.
+Function:
+signup_plumber(details: d) → 201 Created
+Postconditions:
+The email for the new user is set from the details `d`.
+
+Operation: SIGNUP_PLUMBER_SETS_PENDING_STATUS
+Preconditions:
+No user exists in the set of users with the role 'plumber' and the same email as in details `d`.
+Function:
+signup_plumber(details: d) → 201 Created
+Postconditions:
+The role for the new user is set to 'plumber'.
+
+Operation: SIGNUP_PLUMBER_SETS_PENDING_STATUS
+Preconditions:
+No user exists in the set of users with the role 'plumber' and the same email as in details `d`.
+Function:
+signup_plumber(details: d) → 201 Created
+Postconditions:
+The status for the new user is set to 'pending verification'.
+
+Operation: INDUCT_PLUMBER_SUITABLE_OK
+Preconditions:
+User `m` is a member of the set of users and has the role 'manager'.
+User `p` is a member of the set of users and has the role 'plumber'.
+The verification result for user `p` is 'suitable'.
+Function:
+induct_plumber(managerID: m, plumberID: p) → 200 OK
+Postconditions:
+The status of user `p` is updated to 'active'.
+
+Operation: PROCESS_UNSUITABLE_VERIFICATION_OK
+Preconditions:
+User `m` is a member of the set of users and has the role 'manager'.
+User `p` is a member of the set of users and has the role 'plumber'.
+The verification result for user `p` is 'not suitable'.
+The decision `d` is either 'requires_training' or 'rejected'.
+Function:
+process_unsuitable_verification(managerID: m, plumberID: p, decision: d) → 200 OK
+Postconditions:
+The status of user `p` is updated to the decision `d`.
+
+Operation: PLUMBER_REAPPLY_OK
+Preconditions:
+User `p` is a member of the set of users and has the role 'plumber'.
+The status of user `p` is 'dismissed'.
+User `p` meets the conditions for reapplication.
+Function:
+reapply_plumber(plumberID: p) → 200 OK
+Postconditions:
+The status of user `p` is updated to 'pending verification'.
+
+Operation: ASSIGN_COMPLAINT_NOTIFIES_PLUMBER
+Preconditions:
+User `m` is a member of the set of users with the role 'manager'.
+User `p` is a member of the set of users with the role 'plumber'.
+Complaint `c` is a member of the set of complaints with a status of 'raised'.
+Function:
+assign_complaint(managerID: m, plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+The assigned plumber for complaint `c` is set to `p`.
+
+Operation: ASSIGN_COMPLAINT_NOTIFIES_PLUMBER
+Preconditions:
+User `m` is a member of the set of users with the role 'manager'.
+User `p` is a member of the set of users with the role 'plumber'.
+Complaint `c` is a member of the set of complaints with a status of 'raised'.
+Function:
+assign_complaint(managerID: m, plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+A new notification is added to the set of notifications.
+
+Operation: ASSIGN_COMPLAINT_NOTIFIES_PLUMBER
+Preconditions:
+User `m` is a member of the set of users with the role 'manager'.
+User `p` is a member of the set of users with the role 'plumber'.
+Complaint `c` is a member of the set of complaints with a status of 'raised'.
+Function:
+assign_complaint(managerID: m, plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+The recipient of the new notification is set to plumber `p`.
+
+Operation: ASSIGN_COMPLAINT_NOTIFIES_PLUMBER
+Preconditions:
+User `m` is a member of the set of users with the role 'manager'.
+User `p` is a member of the set of users with the role 'plumber'.
+Complaint `c` is a member of the set of complaints with a status of 'raised'.
+Function:
+assign_complaint(managerID: m, plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+The complaint ID of the new notification is set to `c`.
+
+Operation: ASSIGN_COMPLAINT_NOTIFIES_CUSTOMER
+Preconditions:
+User `m` is a member of the set of users with the role 'manager'.
+User `p` is a member of the set of users with the role 'plumber'.
+Complaint `c` is a member of the set of complaints with a status of 'raised'.
+Function:
+assign_complaint(managerID: m, plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+The assigned plumber for complaint `c` is set to `p`.
+
+Operation: ASSIGN_COMPLAINT_NOTIFIES_CUSTOMER
+Preconditions:
+User `m` is a member of the set of users with the role 'manager'.
+User `p` is a member of the set of users with the role 'plumber'.
+Complaint `c` is a member of the set of complaints with a status of 'raised'.
+Function:
+assign_complaint(managerID: m, plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+A new notification is added to the set of notifications.
+
+Operation: ASSIGN_COMPLAINT_NOTIFIES_CUSTOMER
+Preconditions:
+User `m` is a member of the set of users with the role 'manager'.
+User `p` is a member of the set of users with the role 'plumber'.
+Complaint `c` is a member of the set of complaints with a status of 'raised'.
+Function:
+assign_complaint(managerID: m, plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+The recipient of the new notification is set to the customer associated with complaint `c`.
+
+Operation: ASSIGN_COMPLAINT_NOTIFIES_CUSTOMER
+Preconditions:
+User `m` is a member of the set of users with the role 'manager'.
+User `p` is a member of the set of users with the role 'plumber'.
+Complaint `c` is a member of the set of complaints with a status of 'raised'.
+Function:
+assign_complaint(managerID: m, plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+The complaint ID of the new notification is set to `c`.
+
+Operation: MANAGER_APPROVE_SPARES_OK
+Preconditions:
+User `m` is a member of the set of users with the role 'manager'.
+Complaint `c` is a member of the set of complaints.
+The spares approval status for complaint `c` is 'pending'.
+Function:
+approve_spares(managerID: m, complaintID: c) → 200 OK
+Postconditions:
+The spares approval status for complaint `c` is updated to 'approved'.
+
+Operation: MANAGER_APPROVE_SPARES_OK
+Preconditions:
+User `m` is a member of the set of users with the role 'manager'.
+Complaint `c` is a member of the set of complaints.
+The spares approval status for complaint `c` is 'pending'.
+Function:
+approve_spares(managerID: m, complaintID: c) → 200 OK
+Postconditions:
+A new notification is added to the set of notifications.
+
+Operation: MANAGER_APPROVE_SPARES_OK
+Preconditions:
+User `m` is a member of the set of users with the role 'manager'.
+Complaint `c` is a member of the set of complaints.
+The spares approval status for complaint `c` is 'pending'.
+Function:
+approve_spares(managerID: m, complaintID: c) → 200 OK
+Postconditions:
+The recipient of the new notification is set to the plumber assigned to complaint `c`.
+
+Operation: MANAGER_REJECT_SPARES_OK
+Preconditions:
+User `m` is a member of the set of users with the role 'manager'.
+Complaint `c` is a member of the set of complaints.
+The spares approval status for complaint `c` is 'pending'.
+Function:
+reject_spares(managerID: m, complaintID: c) → 200 OK
+Postconditions:
+The spares approval status for complaint `c` is updated to 'rejected'.
+
+Operation: MANAGER_REJECT_SPARES_OK
+Preconditions:
+User `m` is a member of the set of users with the role 'manager'.
+Complaint `c` is a member of the set of complaints.
+The spares approval status for complaint `c` is 'pending'.
+Function:
+reject_spares(managerID: m, complaintID: c) → 200 OK
+Postconditions:
+A new notification is added to the set of notifications.
+
+Operation: MANAGER_REJECT_SPARES_OK
+Preconditions:
+User `m` is a member of the set of users with the role 'manager'.
+Complaint `c` is a member of the set of complaints.
+The spares approval status for complaint `c` is 'pending'.
+Function:
+reject_spares(managerID: m, complaintID: c) → 200 OK
+Postconditions:
+The recipient of the new notification is set to the plumber assigned to complaint `c`.
+
+Operation: PLUMBER_SUBMIT_QUOTATION_OK
+Preconditions:
+User `p` is a member of the set of users with the role 'plumber'.
+Complaint `c` is assigned to plumber `p`.
+Function:
+submit_quotation(plumberID: p, complaintID: c, quotation_details: qd) → 201 Created
+Postconditions:
+A new quotation is added to the set of quotations.
+
+Operation: PLUMBER_SUBMIT_QUOTATION_OK
+Preconditions:
+User `p` is a member of the set of users with the role 'plumber'.
+Complaint `c` is assigned to plumber `p`.
+Function:
+submit_quotation(plumberID: p, complaintID: c, quotation_details: qd) → 201 Created
+Postconditions:
+The complaint ID for the new quotation is set to `c`.
+
+Operation: PLUMBER_SUBMIT_QUOTATION_OK
+Preconditions:
+User `p` is a member of the set of users with the role 'plumber'.
+Complaint `c` is assigned to plumber `p`.
+Function:
+submit_quotation(plumberID: p, complaintID: c, quotation_details: qd) → 201 Created
+Postconditions:
+The details for the new quotation are set from `qd`.
+
+Operation: CUSTOMER_REJECT_QUOTATION_OK
+Preconditions:
+Complaint `c` is a member of the set of complaints.
+User `cust` is the customer associated with complaint `c`.
+The quotation status for complaint `c` is 'pending'.
+Function:
+reject_quotation(customerID: cust, complaintID: c) → 200 OK
+Postconditions:
+The quotation status for complaint `c` is updated to 'rejected'.
+
+Operation: PLUMBER_MARK_COMPLAINT_COMPLETED_OK
+Preconditions:
+User `p` is a member of the set of users with the role 'plumber'.
+Complaint `c` is assigned to plumber `p` and has a status of 'processing'.
+Function:
+mark_work_completed(plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+The status of complaint `c` is updated to 'completed_pending_satisfaction'.
+
+Operation: PLUMBER_MARK_COMPLAINT_COMPLETED_OK
+Preconditions:
+User `p` is a member of the set of users with the role 'plumber'.
+Complaint `c` is assigned to plumber `p` and has a status of 'processing'.
+Function:
+mark_work_completed(plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+A new notification is added to the set of notifications.
+
+Operation: PLUMBER_MARK_COMPLAINT_COMPLETED_OK
+Preconditions:
+User `p` is a member of the set of users with the role 'plumber'.
+Complaint `c` is assigned to plumber `p` and has a status of 'processing'.
+Function:
+mark_work_completed(plumberID: p, complaintID: c) → 200 OK
+Postconditions:
+The recipient of the new notification is set to the customer associated with complaint `c`.
+
+Operation: CUSTOMER_MARK_COMPLAINT_SATISFACTORY_OK
+Preconditions:
+User `c` is a member of the set of users with the role 'customer'.
+Complaint `complaint` is associated with customer `c` and has a status of 'completed_pending_satisfaction'.
+Function:
+mark_work_satisfactory(customerID: c, complaintID: complaint) → 200 OK
+Postconditions:
+The status of complaint `complaint` is updated to 'completed'.
+
+Operation: CUSTOMER_MARK_COMPLAINT_SATISFACTORY_OK
+Preconditions:
+User `c` is a member of the set of users with the role 'customer'.
+Complaint `complaint` is associated with customer `c` and has a status of 'completed_pending_satisfaction'.
+Function:
+mark_work_satisfactory(customerID: c, complaintID: complaint) → 200 OK
+Postconditions:
+A new notification is added to the set of notifications.
+
+Operation: CUSTOMER_MARK_COMPLAINT_SATISFACTORY_OK
+Preconditions:
+User `c` is a member of the set of users with the role 'customer'.
+Complaint `complaint` is associated with customer `c` and has a status of 'completed_pending_satisfaction'.
+Function:
+mark_work_satisfactory(customerID: c, complaintID: complaint) → 200 OK
+Postconditions:
+The recipient of the new notification is set to the manager of the system.
+
+Operation: MANAGER_DISMISS_COMPLAINT_OK
+Preconditions:
+User `m` is a member of the set of users with the role 'manager'.
+Complaint `c` is a member of the set of complaints.
+Function:
+dismiss_complaint(managerID: m, complaintID: c) → 200 OK
+Postconditions:
+The status of complaint `c` is updated to 'dismissed'.
+
+Operation: MANAGER_VIEW_PLUMBER_PROFILE_OK
+Preconditions:
+User `m` is a member of the set of users with the role 'manager'.
+User `p` is a member of the set of users with the role 'plumber'.
+Function:
+view_plumber_profile(managerID: m, plumberID: p) → 200 OK
+Postconditions:
+The set of users remains unchanged.
+
+Operation: LOGIN_SUCCESS
+Preconditions:
+A user exists with the provided email and password.
+Function:
+login(email: e, password: p) → 200 OK
+Postconditions:
+A new session is created and added to the set of active sessions.
+
+Operation: LOGIN_SUCCESS
+Preconditions:
+A user exists with the provided email and password.
+Function:
+login(email: e, password: p) → 200 OK
+Postconditions:
+The user ID for the new session is set to the ID of the authenticated user.
+
+Operation: LOGOUT_SUCCESS
+Preconditions:
+Session `s` is a member of the set of active sessions.
+Function:
+logout(sessionID: s) → 200 OK
+Postconditions:
+Session `s` is removed from the set of active sessions.
+
+Operation: UPDATE_OWN_PROFILE_OK
+Preconditions:
+User `u` is a member of the set of users.
+Function:
+update_profile(userID: u, new_phone: phone) → 200 OK
+Postconditions:
+The phone number for user `u` is updated to `phone`.
+
+Operation: LOGIN_FAIL_BAD_CREDENTIALS
+Preconditions:
+No user exists with the provided email and password combination.
+Function:
+login(email: e, password: p) → 401 Unauthorized
+Postconditions:
+The set of active sessions remains unchanged.
+
+Operation: SIGNUP_CUSTOMER_OK
+Preconditions:
+No user exists in the set of users with the provided email.
+Function:
+signup_customer(email: e, name: n, password: p) → 201 Created
+Postconditions:
+A new user is added to the set of users.
+
+Operation: SIGNUP_CUSTOMER_OK
+Preconditions:
+No user exists in the set of users with the provided email.
+Function:
+signup_customer(email: e, name: n, password: p) → 201 Created
+Postconditions:
+The role for the new user is set to 'customer'.
+
+Operation: SIGNUP_CUSTOMER_OK
+Preconditions:
+No user exists in the set of users with the provided email.
+Function:
+signup_customer(email: e, name: n, password: p) → 201 Created
+Postconditions:
+The status for the new user is set to 'active'.
+
+Operation: SIGNUP_CUSTOMER_OK
+Preconditions:
+No user exists in the set of users with the provided email.
+Function:
+signup_customer(email: e, name: n, password: p) → 201 Created
+Postconditions:
+The email for the new user is set to `e`.

@@ -1,0 +1,1 @@
+no change in the number of specs but same result as prev (started the strict mode)

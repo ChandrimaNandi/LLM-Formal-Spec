@@ -1,0 +1,27 @@
+Types:
+  Role = 'customer' | 'plumber' | 'manager'
+  UserID = String
+  UserDetails = { email: String, role: Role }
+
+State Variables:
+  U: Map<UserID, UserDetails>
+
+---
+Operation: SIGNUP_REQUIRES_VALID_ROLE
+Preconditions:
+  d.role in {'customer', 'plumber', 'manager'}
+  not (exists u in dom(U) where U[u].email == d.email)
+
+Function:
+  signup(d: UserDetails) → UserID [201]
+
+Postconditions:
+  exists u_new: UserID such that
+    u_new not in dom(U) and
+    dom(U') == dom(U) union {u_new} and
+    U'[u_new].email == d.email and
+    U'[u_new].role == d.role and
+    forall u_old in dom(U), U'[u_old] == U[u_old]
+
+REMOVED_SPECS: 0
+REMOVED_LABELS: []

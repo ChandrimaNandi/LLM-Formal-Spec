@@ -1,0 +1,13 @@
+Operation: SIGNUP_REQUIRES_VALID_ROLE
+Preconditions:
+  d.role in {'customer', 'plumber', 'manager'}
+  not (exists u in dom(U) where U[u].email = d.email)
+
+Function:
+  signup(details: d: UserDetails) → UserID [201]
+
+Postconditions:
+  exists u_new in dom(U') where U'[u_new].email = d.email and U'[u_new].role = d.role
+
+REMOVED_SPECS: 0
+REMOVED_LABELS: []

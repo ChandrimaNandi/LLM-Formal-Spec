@@ -1,0 +1,282 @@
+Here is the corrected and verified version of the formal specifications.
+
+---
+### **State Variables**
+
+Let `UserID`, `ComplaintID`, `InvitationID`, `OrderID`, `NotificationID`, `SessionID`, `SparePartID` be given sets of identifiers.
+
+**Primitive Types:**
+*   `String`, `ℕ` (Natural Numbers), `Boolean`, `DateTime` are assumed to be predefined.
+
+**Record Schemas:**
+
+*   `UserRecord` ::=
+    *   `role`: {'customer', 'plumber', 'manager'}
+    *   `privilege_level`: ℕ
+    *   `email`: String
+    *   `phone`: String
+    *   `status`: {'active', 'pending_verification', 'requires_training', 'rejected', 'dismissed'}
+    *   `specialties`: Set of String
+    *   `other_details`: String
+    *   `verification_result`: {'suitable', 'not suitable'}
+    *   `training_status`: {'pending', 'completed'}
+    *   `is_existing`: Boolean
+    *   *... and other user-related fields.*
+
+*   `ComplaintRecord` ::=
+    *   `customerID`: `UserID`
+    *   `status`: {'raised', 'assigned', 'processing', 'Under examination', 'completed', 'closed-satisfactory', 'closed-cancelled'}
+    *   `assigned_plumber`: `UserID`
+    *   `quotation`: `QuotationDetails`
+    *   `quotation_status`: {'pending', 'approved', 'rejected'}
+    *   `requested_spares`: Set of `SparePartID`
+    *   `spares_approval_status`: {'pending', 'approved', 'rejected'}
+    *   `plumber_response`: String
+    *   `suggested_slots`: Set of `DateTime`
+    *   `confirmed_slot`: `DateTime`
+    *   `is_warranty`: Boolean
+    *   `final_charges`: `ChargeDetails`
+    *   *... and other complaint-related fields.*
+
+*   `InvitationRecord` ::= (`inviter`: `UserID`, `invitee_email`: String, `privilege_level`: ℕ)
+*   `OrderRecord` ::= (`plumberID`: `UserID`, `complaintID`: `ComplaintID`, `parts`: Set of `SparePartID`)
+*   `NotificationRecord` ::= (`recipient`: `UserID`, `complaintID`: `ComplaintID`, `content`: String)
+*   `SessionRecord` ::= (`userID`: `UserID`)
+*   `QuotationDetails` ::= (*... fields for labor cost, parts cost, taxes, etc.*)
+*   `ChargeDetails` ::= (*... fields for final billable amounts.*)
+*   `RateDetails` ::= (*... fields for standard service rates.*)
+
+**State Schema:**
+
+*   `U`: A mapping from `UserID` to `UserRecord`.
+*   `Complaints`: A mapping from `ComplaintID` to `ComplaintRecord`.
+*   `Invitations`: A set of `InvitationRecord`.
+*   `Orders`: A set of `OrderRecord`.
+*   `Warehouse`: A mapping from `SparePartID` to quantity (ℕ).
+*   `Notifications`: A set of `NotificationRecord`.
+*   `Sessions`: A set of `SessionRecord`.
+*   `SystemConfig`: A record containing `service_rates`: `RateDetails`.
+
+**Auxiliary Functions:**
+*   `verify_credentials(credentials, user_record)`: Returns true if credentials match the user record.
+*   `has_essential_info(details)`: Returns true if complaint details are sufficient.
+*   `calculate_slots(plumber, complaint)`: Returns a set of available `DateTime` slots for a plumber.
+*   `recalculate_slots(plumber, complaint, old_slots)`: Returns a new set of slots, different from `old_slots`.
+*   `select_new_plumber(complaint)`: Returns a `UserID` for a suitable new plumber.
+
+---
+### **Initialization**
+
+*   `U` = {`u_admin` ↦ an initial administrator user record with `role`='manager', `status`='active'}
+*   `Complaints` = ∅
+*   `Invitations` = ∅
+*   `Orders` = ∅
+*   `Warehouse` = ∅
+*   `Notifications` = ∅
+*   `Sessions` = ∅
+*   `SystemConfig` = (service_rates ↦ default_rates)
+
+---
+### **Operations**
+
+Operation: INVITE_USER_PRIVILEGE_OK
+Preconditions:
+inviterID ∈ dom(U) ∧ U[inviterID].privilege_level > privilege_level ∧
+(∃ s ∈ Sessions ∧ s.userID = inviterID)
+Function:
+invite_user(inviterID: UserID, invitee_email: String, privilege_level: ℕ) → 201 Created
+Postconditions:
+∃ inv ∈ InvitationRecord ∧ inv.inviter = inviterID ∧ inv.invitee_email = invitee_email ∧ inv.privilege_level = privilege_level ∧
+Invitations' = Invitations ∪ {inv} ∧
+U' = U ∧ Complaints' = Complaints ∧ Orders' = Orders ∧ Warehouse' = Warehouse ∧ Notifications' = Notifications ∧ Sessions' = Sessions ∧ SystemConfig' = SystemConfig
+
+------------------------------------
+
+Operation: DELETE_ACCOUNT_PRIVILEGE_OK
+Preconditions:
+deleterID ∈ dom(U) ∧ accountID ∈ dom(U) ∧ U[deleterID].privilege_level > U[accountID].privilege_level ∧
+(∃ s ∈ Sessions ∧ s.userID = deleterID)
+Function:
+delete_account(deleterID: UserID, accountID: UserID) → 200 OK
+Postconditions:
+U' = {accountID} ⩤ U ∧
+Complaints' = Complaints ∧ Invitations' = Invitations ∧ Orders' = Orders ∧ Warehouse' = Warehouse ∧ Notifications' = Notifications ∧ Sessions' = Sessions ∧ SystemConfig' = SystemConfig
+
+------------------------------------
+
+Operation: USER_SIGNIN_OK
+Preconditions:
+∃! u ∈ dom(U) ∧ U[u].status = 'active' ∧ verify_credentials(credentials, U[u])
+Function:
+signin(credentials: c) → 200 OK
+Postconditions:
+let u | ∃! u' ∈ dom(U) ∧ U[u'].status = 'active' ∧ verify_credentials(credentials, U[u']) in
+∃ s ∈ SessionRecord ∧ s.userID = u ∧
+Sessions' = Sessions ∪ {s} ∧
+U' = U ∧ Complaints' = Complaints ∧ Invitations' = Invitations ∧ Orders' = Orders ∧ Warehouse' = Warehouse ∧ Notifications' = Notifications ∧ SystemConfig' = SystemConfig
+
+------------------------------------
+
+Operation: SIGNUP
+Preconditions:
+details.role ∈ {'customer', 'plumber', 'manager'} ∧
+details.email ≠ NULL ∧ details.phone ≠ NULL ∧
+¬(∃ u ∈ dom(U) ∧ U[u].email = details.email) ∧
+((details.role = 'plumber') ⇒ (details.specialties ≠ NULL ∧ details.other_details ≠ NULL))
+Function:
+signup(details: d) → 201 Created
+Postconditions:
+∃ u_new ∉ dom(U) ∧
+let user_rec = (role ↦ details.role, email ↦ details.email, phone ↦ details.phone, status ↦ (if details.role = 'plumber' then 'pending_verification' else 'active'), specialties ↦ (if details.role = 'plumber' then details.specialties else ∅), ...) in
+U' = U ∪ {u_new ↦ user_rec} ∧
+Complaints' = Complaints ∧ Invitations' = Invitations ∧ Orders' = Orders ∧ Warehouse' = Warehouse ∧ Notifications' = Notifications ∧ Sessions' = Sessions ∧ SystemConfig' = SystemConfig
+
+------------------------------------
+
+Operation: RAISE_COMPLAINT
+Preconditions:
+customerID ∈ dom(U) ∧ U[customerID].role = 'customer' ∧ has_essential_info(details) ∧
+(∃ s ∈ Sessions ∧ s.userID = customerID)
+Function:
+raise_complaint(customerID: UserID, details: d) → 201 Created
+Postconditions:
+∃ c_new ∉ dom(Complaints) ∧
+let complaint_rec = (customerID ↦ customerID, details ↦ d, status ↦ 'raised', ...) in
+Complaints' = Complaints ∪ {c_new ↦ complaint_rec} ∧
+U' = U ∧ Invitations' = Invitations ∧ Orders' = Orders ∧ Warehouse' = Warehouse ∧ Notifications' = Notifications ∧ Sessions' = Sessions ∧ SystemConfig' = SystemConfig
+
+------------------------------------
+
+Operation: ASSIGN_COMPLAINT
+Preconditions:
+managerID ∈ dom(U) ∧ U[managerID].role = 'manager' ∧ plumberID ∈ dom(U) ∧ U[plumberID].role = 'plumber' ∧ U[plumberID].status = 'active' ∧ complaintID ∈ dom(Complaints) ∧ Complaints[complaintID].status = 'raised' ∧
+(∃ s ∈ Sessions ∧ s.userID = managerID)
+Function:
+assign_complaint(managerID: UserID, plumberID: UserID, complaintID: ComplaintID) → 200 OK
+Postconditions:
+Complaints' = Complaints ⊕ {complaintID ↦ (Complaints[complaintID] with assigned_plumber ↦ plumberID, suggested_slots ↦ calculate_slots(plumberID, complaintID), status ↦ 'assigned')} ∧
+∃ n_p, n_c ∈ NotificationRecord ∧
+n_p.recipient = plumberID ∧ n_p.complaintID = complaintID ∧ n_p.content = "You have been assigned a new complaint." ∧
+n_c.recipient = Complaints[complaintID].customerID ∧ n_c.complaintID = complaintID ∧ n_c.content = "A plumber has been assigned to your complaint." ∧
+Notifications' = Notifications ∪ {n_p, n_c} ∧
+U' = U ∧ Invitations' = Invitations ∧ Orders' = Orders ∧ Warehouse' = Warehouse ∧ Sessions' = Sessions ∧ SystemConfig' = SystemConfig
+
+------------------------------------
+
+Operation: PLUMBER_VIEW_ASSIGNED_COMPLAINT_OK
+Preconditions:
+plumberID ∈ dom(U) ∧ U[plumberID].role = 'plumber' ∧ complaintID ∈ dom(Complaints) ∧ Complaints[complaintID].assigned_plumber = plumberID ∧
+(∃ s ∈ Sessions ∧ s.userID = plumberID)
+Function:
+view_complaint(plumberID: UserID, complaintID: ComplaintID) → 200 OK
+Postconditions:
+U' = U ∧ Complaints' = Complaints ∧ Invitations' = Invitations ∧ Orders' = Orders ∧ Warehouse' = Warehouse ∧ Notifications' = Notifications ∧ Sessions' = Sessions ∧ SystemConfig' = SystemConfig
+
+------------------------------------
+
+Operation: PLUMBER_RESPOND_TO_COMPLAINT_OK
+Preconditions:
+plumberID ∈ dom(U) ∧ U[plumberID].role = 'plumber' ∧ complaintID ∈ dom(Complaints) ∧ Complaints[complaintID].status = 'assigned' ∧ Complaints[complaintID].assigned_plumber = plumberID ∧
+(∃ s ∈ Sessions ∧ s.userID = plumberID)
+Function:
+respond_to_complaint(plumberID: UserID, complaintID: ComplaintID, response: String) → 200 OK
+Postconditions:
+Complaints' = Complaints ⊕ {complaintID ↦ (Complaints[complaintID] with plumber_response ↦ response, status ↦ 'processing')} ∧
+U' = U ∧ Invitations' = Invitations ∧ Orders' = Orders ∧ Warehouse' = Warehouse ∧ Notifications' = Notifications ∧ Sessions' = Sessions ∧ SystemConfig' = SystemConfig
+
+------------------------------------
+
+Operation: CUSTOMER_SELECT_SLOT_OK
+Preconditions:
+customerID ∈ dom(U) ∧ U[customerID].role = 'customer' ∧ complaintID ∈ dom(Complaints) ∧ Complaints[complaintID].customerID = customerID ∧ slot ∈ Complaints[complaintID].suggested_slots ∧
+(∃ s ∈ Sessions ∧ s.userID = customerID)
+Function:
+select_slot(customerID: UserID, complaintID: ComplaintID, slot: DateTime) → 200 OK
+Postconditions:
+Complaints' = Complaints ⊕ {complaintID ↦ (Complaints[complaintID] with confirmed_slot ↦ slot)} ∧
+U' = U ∧ Invitations' = Invitations ∧ Orders' = Orders ∧ Warehouse' = Warehouse ∧ Notifications' = Notifications ∧ Sessions' = Sessions ∧ SystemConfig' = SystemConfig
+
+------------------------------------
+
+Operation: PLUMBER_UPDATE_COMPLAINT_STATUS_AFTER_VISIT
+Preconditions:
+plumberID ∈ dom(U) ∧ U[plumberID].role = 'plumber' ∧ complaintID ∈ dom(Complaints) ∧ Complaints[complaintID].assigned_plumber = plumberID ∧ Complaints[complaintID].status = 'processing' ∧ new_status = 'Under examination' ∧
+(∃ s ∈ Sessions ∧ s.userID = plumberID)
+Function:
+update_complaint_status(plumberID: UserID, complaintID: ComplaintID, new_status: String) → 200 OK
+Postconditions:
+Complaints' = Complaints ⊕ {complaintID ↦ (Complaints[complaintID] with status ↦ new_status)} ∧
+U' = U ∧ Invitations' = Invitations ∧ Orders' = Orders ∧ Warehouse' = Warehouse ∧ Notifications' = Notifications ∧ Sessions' = Sessions ∧ SystemConfig' = SystemConfig
+
+------------------------------------
+
+Operation: GENERATE_QUOTATION_POSSIBLE
+Preconditions:
+actorID ∈ dom(U) ∧ (U[actorID].role = 'plumber' ∨ U[actorID].role = 'manager') ∧ complaintID ∈ dom(Complaints) ∧ Complaints[complaintID].status = 'Under examination' ∧
+(∃ s ∈ Sessions ∧ s.userID = actorID)
+Function:
+generate_quotation(actorID: UserID, complaintID: ComplaintID, quote_details: QuotationDetails) → 200 OK
+Postconditions:
+Complaints' = Complaints ⊕ {complaintID ↦ (Complaints[complaintID] with quotation ↦ quote_details, quotation_status ↦ 'pending')} ∧
+U' = U ∧ Invitations' = Invitations ∧ Orders' = Orders ∧ Warehouse' = Warehouse ∧ Notifications' = Notifications ∧ Sessions' = Sessions ∧ SystemConfig' = SystemConfig
+
+------------------------------------
+
+Operation: CUSTOMER_APPROVE_QUOTATION
+Preconditions:
+customerID ∈ dom(U) ∧ complaintID ∈ dom(Complaints) ∧ Complaints[complaintID].customerID = customerID ∧ Complaints[complaintID].status = 'Under examination' ∧ Complaints[complaintID].quotation_status = 'pending' ∧
+(∃ s ∈ Sessions ∧ s.userID = customerID)
+Function:
+approve_quotation(customerID: UserID, complaintID: ComplaintID) → 200 OK
+Postconditions:
+Complaints' = Complaints ⊕ {complaintID ↦ (Complaints[complaintID] with quotation_status ↦ 'approved', status ↦ 'processing')} ∧
+U' = U ∧ Invitations' = Invitations ∧ Orders' = Orders ∧ Warehouse' = Warehouse ∧ Notifications' = Notifications ∧ Sessions' = Sessions ∧ SystemConfig' = SystemConfig
+
+------------------------------------
+
+Operation: REJECT_SERVICE_DUE_TO_COST_OK
+Preconditions:
+customerID ∈ dom(U) ∧ complaintID ∈ dom(Complaints) ∧ Complaints[complaintID].customerID = customerID ∧ Complaints[complaintID].quotation_status = 'pending' ∧
+(∃ s ∈ Sessions ∧ s.userID = customerID)
+Function:
+reject_service_due_to_cost(customerID: UserID, complaintID: ComplaintID) → 200 OK
+Postconditions:
+Complaints' = Complaints ⊕ {complaintID ↦ (Complaints[complaintID] with status ↦ 'closed-cancelled', quotation_status ↦ 'rejected')} ∧
+U' = U ∧ Invitations' = Invitations ∧ Orders' = Orders ∧ Warehouse' = Warehouse ∧ Notifications' = Notifications ∧ Sessions' = Sessions ∧ SystemConfig' = SystemConfig
+
+------------------------------------
+
+Operation: PLUMBER_REQUEST_SPARES_APPROVAL_OK
+Preconditions:
+plumberID ∈ dom(U) ∧ U[plumberID].role = 'plumber' ∧ complaintID ∈ dom(Complaints) ∧ Complaints[complaintID].assigned_plumber = plumberID ∧ Complaints[complaintID].quotation_status = 'approved' ∧
+(∃ s ∈ Sessions ∧ s.userID = plumberID)
+Function:
+request_spares_approval(plumberID: UserID, complaintID: ComplaintID, spare_parts: Set of SparePartID) → 200 OK
+Postconditions:
+Complaints' = Complaints ⊕ {complaintID ↦ (Complaints[complaintID] with requested_spares ↦ spare_parts, spares_approval_status ↦ 'pending')} ∧
+U' = U ∧ Invitations' = Invitations ∧ Orders' = Orders ∧ Warehouse' = Warehouse ∧ Notifications' = Notifications ∧ Sessions' = Sessions ∧ SystemConfig' = SystemConfig
+
+------------------------------------
+
+Operation: MANAGER_APPROVE_SPARES
+Preconditions:
+managerID ∈ dom(U) ∧ U[managerID].role = 'manager' ∧ complaintID ∈ dom(Complaints) ∧ Complaints[complaintID].spares_approval_status = 'pending' ∧
+(∃ s ∈ Sessions ∧ s.userID = managerID)
+Function:
+approve_spares(managerID: UserID, complaintID: ComplaintID) → 200 OK
+Postconditions:
+Complaints' = Complaints ⊕ {complaintID ↦ (Complaints[complaintID] with spares_approval_status ↦ 'approved')} ∧
+U' = U ∧ Invitations' = Invitations ∧ Orders' = Orders ∧ Warehouse' = Warehouse ∧ Notifications' = Notifications ∧ Sessions' = Sessions ∧ SystemConfig' = SystemConfig
+
+------------------------------------
+
+Operation: PLUMBER_CAN_ORDER_SPARES
+Preconditions:
+plumberID ∈ dom(U) ∧ U[plumberID].role = 'plumber' ∧ complaintID ∈ dom(Complaints) ∧ Complaints[complaintID].assigned_plumber = plumberID ∧ Complaints[complaintID].spares_approval_status = 'approved' ∧
+(∃ s ∈ Sessions ∧ s.userID = plumberID)
+Function:
+order_spares(plumberID: UserID, complaintID: ComplaintID, spare_parts: Set of SparePartID) → 201 Created
+Postconditions:
+∃ new_order ∈ OrderRecord ∧ new_order.plumberID = plumberID ∧ new_order.complaintID = complaintID ∧ new_order.parts = spare_parts ∧
+Orders' = Orders ∪ {new_order} ∧
+U' = U ∧ Complaints' = Complaints ∧ Invitations' = Invitations ∧ Warehouse' = Warehouse ∧ Notifications' = Notifications ∧ Sessions' = Sessions ∧ SystemConfig' = SystemConfig
