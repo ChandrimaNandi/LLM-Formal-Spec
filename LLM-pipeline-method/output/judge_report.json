@@ -1,0 +1,268 @@
+{
+  "overall_score": 0.73,
+  "operation_scores": [
+    {
+      "operationId": "1-A",
+      "name": "Signup",
+      "score": 0.81,
+      "dimension_scores": {
+        "name_accuracy": 1.0,
+        "purpose_accuracy": 0.8,
+        "precondition_match": 0.8,
+        "postcondition_match": 0.8,
+        "state_variables": 0.6
+      },
+      "feedback": "Purpose and precondition could be more detailed."
+    },
+    {
+      "operationId": "1-B",
+      "name": "Login",
+      "score": 0.83,
+      "dimension_scores": {
+        "name_accuracy": 1.0,
+        "purpose_accuracy": 0.9,
+        "precondition_match": 0.8,
+        "postcondition_match": 0.8,
+        "state_variables": 0.8
+      },
+      "feedback": "Precondition and postcondition could be more detailed."
+    },
+    {
+      "operationId": "1-C",
+      "name": "Logout",
+      "score": 0.85,
+      "dimension_scores": {
+        "name_accuracy": 1.0,
+        "purpose_accuracy": 0.9,
+        "precondition_match": 0.9,
+        "postcondition_match": 0.9,
+        "state_variables": 0.8
+      },
+      "feedback": "State variables could be more detailed."
+    },
+    {
+      "operationId": "2-k",
+      "name": "Submit Onboarding Step k",
+      "score": 0.65,
+      "dimension_scores": {
+        "name_accuracy": 1.0,
+        "purpose_accuracy": 0.7,
+        "precondition_match": 0.6,
+        "postcondition_match": 0.6,
+        "state_variables": 0.4
+      },
+      "feedback": "Purpose, precondition, postcondition, and state variables could be more detailed."
+    },
+    {
+      "operationId": "3-A",
+      "name": "Initial Qualification Application",
+      "score": 0.78,
+      "dimension_scores": {
+        "name_accuracy": 1.0,
+        "purpose_accuracy": 0.8,
+        "precondition_match": 0.8,
+        "postcondition_match": 0.8,
+        "state_variables": 0.6
+      },
+      "feedback": "Purpose and precondition could be more detailed."
+    },
+    {
+      "operationId": "3-B1",
+      "name": "Semi-Qualify (Send to Training)",
+      "score": 0.8,
+      "dimension_scores": {
+        "name_accuracy": 1.0,
+        "purpose_accuracy": 0.9,
+        "precondition_match": 0.8,
+        "postcondition_match": 0.8,
+        "state_variables": 0.6
+      },
+      "feedback": "Precondition and postcondition could be more detailed."
+    },
+    {
+      "operationId": "3-B2",
+      "name": "Fully Qualify (Activate)",
+      "score": 0.8,
+      "dimension_scores": {
+        "name_accuracy": 1.0,
+        "purpose_accuracy": 0.9,
+        "precondition_match": 0.8,
+        "postcondition_match": 0.8,
+        "state_variables": 0.6
+      },
+      "feedback": "Precondition and postcondition could be more detailed."
+    },
+    {
+      "operationId": "3-B3",
+      "name": "Disqualify (Reject)",
+      "score": 0.8,
+      "dimension_scores": {
+        "name_accuracy": 1.0,
+        "purpose_accuracy": 0.9,
+        "precondition_match": 0.8,
+        "postcondition_match": 0.8,
+        "state_variables": 0.6
+      },
+      "feedback": "Precondition and postcondition could be more detailed."
+    },
+    {
+      "operationId": "3-C1",
+      "name": "Suspend Plumber",
+      "score": 0.78,
+      "dimension_scores": {
+        "name_accuracy": 1.0,
+        "purpose_accuracy": 0.8,
+        "precondition_match": 0.8,
+        "postcondition_match": 0.8,
+        "state_variables": 0.6
+      },
+      "feedback": "Purpose and precondition could be more detailed."
+    },
+    {
+      "operationId": "3-C2",
+      "name": "Reinstate Plumber",
+      "score": 0.78,
+      "dimension_scores": {
+        "name_accuracy": 1.0,
+        "purpose_accuracy": 0.8,
+        "precondition_match": 0.8,
+        "postcondition_match": 0.8,
+        "state_variables": 0.6
+      },
+      "feedback": "Purpose and precondition could be more detailed."
+    },
+    {
+      "operationId": "4-A",
+      "name": "Raise Complaint",
+      "score": 0.73,
+      "dimension_scores": {
+        "name_accuracy": 1.0,
+        "purpose_accuracy": 0.8,
+        "precondition_match": 0.6,
+        "postcondition_match": 0.6,
+        "state_variables": 0.6
+      },
+      "feedback": "Precondition and postcondition could be more detailed."
+    },
+    {
+      "operationId": "4-B",
+      "name": "Assign Plumber to Complaint",
+      "score": 0.78,
+      "dimension_scores": {
+        "name_accuracy": 1.0,
+        "purpose_accuracy": 0.8,
+        "precondition_match": 0.8,
+        "postcondition_match": 0.8,
+        "state_variables": 0.6
+      },
+      "feedback": "Purpose and precondition could be more detailed."
+    },
+    {
+      "operationId": "4-C1",
+      "name": "Plumber Accepts Assignment",
+      "score": 0.8,
+      "dimension_scores": {
+        "name_accuracy": 1.0,
+        "purpose_accuracy": 0.9,
+        "precondition_match": 0.8,
+        "postcondition_match": 0.8,
+        "state_variables": 0.6
+      },
+      "feedback": "Precondition and postcondition could be more detailed."
+    },
+    {
+      "operationId": "4-C2",
+      "name": "Plumber Rejects Assignment",
+      "score": 0.8,
+      "dimension_scores": {
+        "name_accuracy": 1.0,
+        "purpose_accuracy": 0.9,
+        "precondition_match": 0.8,
+        "postcondition_match": 0.8,
+        "state_variables": 0.6
+      },
+      "feedback": "Precondition and postcondition could be more detailed."
+    },
+    {
+      "operationId": "4-D1",
+      "name": "Raise Quotation",
+      "score": 0.78,
+      "dimension_scores": {
+        "name_accuracy": 1.0,
+        "purpose_accuracy": 0.8,
+        "precondition_match": 0.8,
+        "postcondition_match": 0.8,
+        "state_variables": 0.6
+      },
+      "feedback": "Purpose and precondition could be more detailed."
+    },
+    {
+      "operationId": "4-D2",
+      "name": "Approve Quotation",
+      "score": 0.78,
+      "dimension_scores": {
+        "name_accuracy": 1.0,
+        "purpose_accuracy": 0.8,
+        "precondition_match": 0.8,
+        "postcondition_match": 0.8,
+        "state_variables": 0.6
+      },
+      "feedback": "Purpose and precondition could be more detailed."
+    },
+    {
+      "operationId": "4-D3",
+      "name": "Reject Quotation / Abandon",
+      "score": 0.78,
+      "dimension_scores": {
+        "name_accuracy": 1.0,
+        "purpose_accuracy": 0.8,
+        "precondition_match": 0.8,
+        "postcondition_match": 0.8,
+        "state_variables": 0.6
+      },
+      "feedback": "Purpose and precondition could be more detailed."
+    },
+    {
+      "operationId": "4-E1",
+      "name": "Mark Task Completed",
+      "score": 0.78,
+      "dimension_scores": {
+        "name_accuracy": 1.0,
+        "purpose_accuracy": 0.8,
+        "precondition_match": 0.8,
+        "postcondition_match": 0.8,
+        "state_variables": 0.6
+      },
+      "feedback": "Purpose and precondition could be more detailed."
+    },
+    {
+      "operationId": "4-E2",
+      "name": "Make Payment",
+      "score": 0.78,
+      "dimension_scores": {
+        "name_accuracy": 1.0,
+        "purpose_accuracy": 0.8,
+        "precondition_match": 0.8,
+        "postcondition_match": 0.8,
+        "state_variables": 0.6
+      },
+      "feedback": "Purpose and precondition could be more detailed."
+    },
+    {
+      "operationId": "4-F",
+      "name": "Submit Feedback",
+      "score": 0.78,
+      "dimension_scores": {
+        "name_accuracy": 1.0,
+        "purpose_accuracy": 0.8,
+        "precondition_match": 0.8,
+        "postcondition_match": 0.8,
+        "state_variables": 0.6
+      },
+      "feedback": "Purpose and precondition could be more detailed."
+    }
+  ],
+  "missing_operations": [],
+  "overall_feedback": "The draft is generally well-structured, but could benefit from more detailed descriptions of purpose, precondition, and postcondition for many operations. Additionally, state variables could be more thoroughly defined in several cases.",
+  "iteration": 2
+}

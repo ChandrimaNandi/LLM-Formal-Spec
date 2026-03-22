@@ -1,0 +1,246 @@
+{
+  "sections": [
+    {
+      "sectionId": 1,
+      "sectionTitle": "Authentication",
+      "operations": [
+        {
+          "operationId": "1-A",
+          "name": "Signup",
+          "purpose": "Create a new user account. The user's password is hashed and stored.",
+          "stateVariables": [
+            "u",
+            "p",
+            "role",
+            "R"
+          ],
+          "precondition": "The username must not already exist.",
+          "postcondition": "The user is added to the system with their hashed password."
+        },
+        {
+          "operationId": "1-B",
+          "name": "Login",
+          "purpose": "Authenticate a user. If the credentials are correct, a token is generated.",
+          "stateVariables": [
+            "u",
+            "p",
+            "T"
+          ],
+          "precondition": "The username and password must match an existing account.",
+          "postcondition": "The user is logged in and a token is generated."
+        },
+        {
+          "operationId": "1-C",
+          "name": "Logout",
+          "purpose": "End a user's session. The token is removed.",
+          "stateVariables": [
+            "token",
+            "T"
+          ],
+          "precondition": "The user must be logged in.",
+          "postcondition": "The user's token is removed, ending their session."
+        }
+      ]
+    },
+    {
+      "sectionId": 2,
+      "sectionTitle": "Plumber Onboarding",
+      "operations": [
+        {
+          "operationId": "2-k",
+          "name": "Submit Onboarding Step k",
+          "purpose": "Advance a plumber through the onboarding process. The plumber's state is updated.",
+          "stateVariables": [
+            "p",
+            "k",
+            "T"
+          ],
+          "precondition": "The plumber must be in the correct state for the current step.",
+          "postcondition": "The plumber's state is updated to the next step."
+        }
+      ]
+    },
+    {
+      "sectionId": 3,
+      "sectionTitle": "Plumber Qualification",
+      "operations": [
+        {
+          "operationId": "3-A",
+          "name": "Initial Qualification Application",
+          "purpose": "Begin the qualification process for a plumber. The plumber's state is updated.",
+          "stateVariables": [
+            "p",
+            "Qual"
+          ],
+          "precondition": "The plumber must be in the initial state.",
+          "postcondition": "The plumber's state is updated to under exam."
+        },
+        {
+          "operationId": "3-B1",
+          "name": "Semi-Qualify (Send to Training)",
+          "purpose": "Update a plumber's state to training.",
+          "stateVariables": [
+            "p",
+            "Qual"
+          ],
+          "precondition": "The plumber must be under exam.",
+          "postcondition": "The plumber's state is updated to training."
+        },
+        {
+          "operationId": "3-B2",
+          "name": "Fully Qualify (Activate)",
+          "purpose": "Update a plumber's state to active.",
+          "stateVariables": [
+            "p",
+            "Qual"
+          ],
+          "precondition": "The plumber must be under exam.",
+          "postcondition": "The plumber's state is updated to active."
+        },
+        {
+          "operationId": "3-B3",
+          "name": "Disqualify (Reject)",
+          "purpose": "Update a plumber's state to rejected.",
+          "stateVariables": [
+            "p",
+            "Qual"
+          ],
+          "precondition": "The plumber must be under exam.",
+          "postcondition": "The plumber's state is updated to rejected."
+        },
+        {
+          "operationId": "3-C1",
+          "name": "Suspend Plumber",
+          "purpose": "Update a plumber's state to suspended.",
+          "stateVariables": [
+            "p",
+            "Qual"
+          ],
+          "precondition": "The plumber must be active.",
+          "postcondition": "The plumber's state is updated to suspended."
+        },
+        {
+          "operationId": "3-C2",
+          "name": "Reinstate Plumber",
+          "purpose": "Update a plumber's state to active.",
+          "stateVariables": [
+            "p",
+            "Qual"
+          ],
+          "precondition": "The plumber must be suspended.",
+          "postcondition": "The plumber's state is updated to active."
+        }
+      ]
+    },
+    {
+      "sectionId": 4,
+      "sectionTitle": "Complaint Lifecycle",
+      "operations": [
+        {
+          "operationId": "4-A",
+          "name": "Raise Complaint",
+          "purpose": "Create a new complaint. The complaint is added to the system.",
+          "stateVariables": [
+            "Compl"
+          ],
+          "precondition": "None",
+          "postcondition": "The complaint is added to the system in the raised state."
+        },
+        {
+          "operationId": "4-B",
+          "name": "Assign Plumber to Complaint",
+          "purpose": "Assign a plumber to a complaint. The complaint's state is updated.",
+          "stateVariables": [
+            "Compl",
+            "p"
+          ],
+          "precondition": "The complaint must be raised and the plumber must be active.",
+          "postcondition": "The complaint is updated with the assigned plumber and its state is updated to assigned."
+        },
+        {
+          "operationId": "4-C1",
+          "name": "Plumber Accepts Assignment",
+          "purpose": "Update a complaint's state to under exam.",
+          "stateVariables": [
+            "Compl",
+            "p"
+          ],
+          "precondition": "The complaint must be assigned to the plumber.",
+          "postcondition": "The complaint's state is updated to under exam."
+        },
+        {
+          "operationId": "4-C2",
+          "name": "Plumber Rejects Assignment",
+          "purpose": "Update a complaint's state to raised and remove the assigned plumber.",
+          "stateVariables": [
+            "Compl",
+            "p"
+          ],
+          "precondition": "The complaint must be assigned to the plumber.",
+          "postcondition": "The complaint's state is updated to raised and the plumber is removed."
+        },
+        {
+          "operationId": "4-D1",
+          "name": "Raise Quotation",
+          "purpose": "Update a complaint with a quotation and update its state to quotation raised.",
+          "stateVariables": [
+            "Compl",
+            "p"
+          ],
+          "precondition": "The complaint must be under exam.",
+          "postcondition": "The complaint is updated with the quotation and its state is updated to quotation raised."
+        },
+        {
+          "operationId": "4-D2",
+          "name": "Approve Quotation",
+          "purpose": "Update a complaint's state to under execution.",
+          "stateVariables": [
+            "Compl"
+          ],
+          "precondition": "The complaint's state must be quotation raised.",
+          "postcondition": "The complaint's state is updated to under execution."
+        },
+        {
+          "operationId": "4-D3",
+          "name": "Reject Quotation / Abandon",
+          "purpose": "Update a complaint's state to abandoned.",
+          "stateVariables": [
+            "Compl"
+          ],
+          "precondition": "The complaint's state must be quotation raised.",
+          "postcondition": "The complaint's state is updated to abandoned."
+        },
+        {
+          "operationId": "4-E1",
+          "name": "Mark Task Completed",
+          "purpose": "Update a complaint's state to payment pending.",
+          "stateVariables": [
+            "Compl"
+          ],
+          "precondition": "The complaint's state must be under execution.",
+          "postcondition": "The complaint's state is updated to payment pending."
+        },
+        {
+          "operationId": "4-E2",
+          "name": "Make Payment",
+          "purpose": "Update a complaint's state to done.",
+          "stateVariables": [
+            "Compl"
+          ],
+          "precondition": "The complaint's state must be payment pending.",
+          "postcondition": "The complaint's state is updated to done."
+        },
+        {
+          "operationId": "4-F",
+          "name": "Submit Feedback",
+          "purpose": "Record feedback for a complaint.",
+          "stateVariables": [
+            "Compl"
+          ],
+          "precondition": "The complaint's state must be done.",
+          "postcondition": "Feedback is recorded for the complaint."
+        }
+      ]
+    }
+  ]
+}

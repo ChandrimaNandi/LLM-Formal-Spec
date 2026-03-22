@@ -1,0 +1,246 @@
+{
+  "sections": [
+    {
+      "sectionId": 1,
+      "sectionTitle": "Authentication",
+      "operations": [
+        {
+          "operationId": "1-A",
+          "name": "Signup",
+          "purpose": "Register a new account. The role parameter determines which credential map (C, P, or M) is updated.",
+          "stateVariables": [
+            "R ∈ {C, P, M} depending on role"
+          ],
+          "precondition": "The username u must not already exist in the target role map R.",
+          "postcondition": "The credential map R now contains an entry mapping u to hashed password p."
+        },
+        {
+          "operationId": "1-B",
+          "name": "Login",
+          "purpose": "Authenticate a user and issue a session token.",
+          "stateVariables": [
+            "R ∈ {C, P, M}",
+            "T (session token map)"
+          ],
+          "precondition": "The password p must match the stored credential for u, AND u must not already have an active session token.",
+          "postcondition": "A new token is issued and recorded in T, mapping token to username u."
+        },
+        {
+          "operationId": "1-C",
+          "name": "Logout",
+          "purpose": "Invalidate the current session token.",
+          "stateVariables": [
+            "T (session token map)"
+          ],
+          "precondition": "The token must exist in the active session map T.",
+          "postcondition": "The token is removed from T; the session is invalidated."
+        }
+      ]
+    },
+    {
+      "sectionId": 2,
+      "sectionTitle": "Plumber Onboarding Wizard (Steps 1–6)",
+      "description": "A newly registered plumber must complete a 6-step onboarding wizard before entering the qualification pipeline. Each step advances the plumber state from STEP_k to STEP_k+1. After Step 6, state becomes ONBOARD_DONE.",
+      "operations": [
+        {
+          "operationId": "2-k",
+          "name": "Submit Onboarding Step k (k = 1..6)",
+          "purpose": "Submit data for step k of the onboarding wizard. Advances plumber state to next step.",
+          "stateVariables": [
+            "Qual (plumber state)",
+            "T (session token — must be valid)"
+          ],
+          "precondition": "The plumber's current onboarding state must be exactly STEP_k, and the session token must be active.",
+          "postcondition": "The plumber's state advances to STEP_k+1. After Step 6, state becomes ONBOARD_DONE."
+        }
+      ]
+    },
+    {
+      "sectionId": 3,
+      "sectionTitle": "Plumber Qualification",
+      "description": "After onboarding is complete, plumbers enter the HR qualification pipeline. Managers drive this pipeline through site visits, training, and final activation decisions.",
+      "operations": [
+        {
+          "operationId": "3-A",
+          "name": "Initial Qualification Application",
+          "purpose": "Submit qualification application with supporting documents. Moves plumber into examination state.",
+          "stateVariables": [
+            "Qual : Map<plumberId, QualState>"
+          ],
+          "precondition": "Plumber qualification state must be Q_INIT (not yet applied).",
+          "postcondition": "Qualification state advances to UNDER_EXAM."
+        },
+        {
+          "operationId": "3-B1",
+          "name": "Semi-Qualify (Send to Training)",
+          "purpose": "After site visit, manager determines plumber needs training before full activation.",
+          "stateVariables": [
+            "Qual : Map<plumberId, QualState>"
+          ],
+          "precondition": "Plumber must be in UNDER_EXAM state.",
+          "postcondition": "Qualification state advances to TRAINING."
+        },
+        {
+          "operationId": "3-B2",
+          "name": "Fully Qualify (Activate)",
+          "purpose": "Manager activates plumber after successful examination.",
+          "stateVariables": [
+            "Qual : Map<plumberId, QualState>"
+          ],
+          "precondition": "Plumber must be in UNDER_EXAM state.",
+          "postcondition": "Qualification state becomes ACTIVE."
+        },
+        {
+          "operationId": "3-B3",
+          "name": "Disqualify (Reject)",
+          "purpose": "Manager rejects plumber after failed examination.",
+          "stateVariables": [
+            "Qual : Map<plumberId, QualState>"
+          ],
+          "precondition": "Plumber must be in UNDER_EXAM state.",
+          "postcondition": "Qualification state becomes REJECTED."
+        },
+        {
+          "operationId": "3-C1",
+          "name": "Suspend Plumber",
+          "purpose": "Temporarily suspend an active plumber.",
+          "stateVariables": [
+            "Qual : Map<plumberId, QualState>"
+          ],
+          "precondition": "Plumber must currently be ACTIVE.",
+          "postcondition": "Qualification state becomes SUSPENDED."
+        },
+        {
+          "operationId": "3-C2",
+          "name": "Reinstate Plumber",
+          "purpose": "Reinstate a previously suspended plumber to active status.",
+          "stateVariables": [
+            "Qual : Map<plumberId, QualState>"
+          ],
+          "precondition": "Plumber must currently be SUSPENDED.",
+          "postcondition": "Qualification state returns to ACTIVE."
+        },
+        {
+          "operationId": "3-C3",
+          "name": "Delete Plumber Account",
+          "purpose": "Permanently remove a plumber from the system.",
+          "stateVariables": [
+            "Qual : Map<plumberId, QualState>",
+            "P : Map<username, password>"
+          ],
+          "precondition": "The plumber must exist in the qualification map.",
+          "postcondition": "The plumber is removed from Qual and P."
+        }
+      ]
+    },
+    {
+      "sectionId": 4,
+      "sectionTitle": "Complaint Lifecycle",
+      "description": "The complaint lifecycle is the core business process of ConDoIt. A complaint transitions through the following states: RAISED → ASSIGNED → UNDER_EXAM_C → QUOTATION_RAISED → UNDER_EXEC → PAYMENT_PENDING → DONE (or ABANDONED or back to RAISED)",
+      "operations": [
+        {
+          "operationId": "4-A",
+          "name": "Raise Complaint",
+          "purpose": "Customer submits a new service complaint or request.",
+          "stateVariables": [
+            "Compl : Map<id, ComplaintRecord>",
+            "T (session token)"
+          ],
+          "precondition": "The customer must be authenticated and in CUSTOMER_IDLE state.",
+          "postcondition": "A new ComplaintRecord is created with state RAISED and added to Compl."
+        },
+        {
+          "operationId": "4-B",
+          "name": "Assign Plumber to Complaint",
+          "purpose": "Manager assigns an active, available plumber to an open complaint.",
+          "stateVariables": [
+            "Compl : Map<id, ComplaintRecord>",
+            "Qual : Map<plumberId, QualState>"
+          ],
+          "precondition": "The complaint must be in RAISED state. The plumber must be ACTIVE in the qualification map.",
+          "postcondition": "The complaint's plumber field is set to plumberId and state advances to ASSIGNED."
+        },
+        {
+          "operationId": "4-C1",
+          "name": "Plumber Accepts Assignment",
+          "purpose": "Assigned plumber accepts the complaint and proceeds to site examination.",
+          "stateVariables": [
+            "Compl : Map<id, ComplaintRecord>"
+          ],
+          "precondition": "The complaint must be in ASSIGNED state, and the calling plumber must be the one assigned.",
+          "postcondition": "Complaint state advances to UNDER_EXAM_C."
+        },
+        {
+          "operationId": "4-C2",
+          "name": "Plumber Rejects Assignment",
+          "purpose": "Assigned plumber rejects the complaint. Complaint returns to RAISED for reassignment.",
+          "stateVariables": [
+            "Compl : Map<id, ComplaintRecord>"
+          ],
+          "precondition": "The complaint must be in ASSIGNED state, and the calling plumber must be the one assigned.",
+          "postcondition": "Complaint state reverts to RAISED; plumber field is cleared."
+        },
+        {
+          "operationId": "4-D1",
+          "name": "Raise Quotation",
+          "purpose": "Plumber submits a cost quotation for the work required. Complaint awaits customer approval.",
+          "stateVariables": [
+            "Compl : Map<id, ComplaintRecord>"
+          ],
+          "precondition": "The complaint must be in UNDER_EXAM_C state.",
+          "postcondition": "The complaint's quotation field is set to items, and state advances to QUOTATION_RAISED."
+        },
+        {
+          "operationId": "4-D2",
+          "name": "Approve Quotation",
+          "purpose": "Customer approves the quotation. Work is authorised to begin.",
+          "stateVariables": [
+            "Compl : Map<id, ComplaintRecord>"
+          ],
+          "precondition": "The complaint must be in QUOTATION_RAISED state.",
+          "postcondition": "Complaint state advances to UNDER_EXEC."
+        },
+        {
+          "operationId": "4-D3",
+          "name": "Reject Quotation / Abandon",
+          "purpose": "Customer rejects the quotation. Complaint is permanently abandoned.",
+          "stateVariables": [
+            "Compl : Map<id, ComplaintRecord>"
+          ],
+          "precondition": "The complaint must be in QUOTATION_RAISED state.",
+          "postcondition": "Complaint state becomes ABANDONED — a terminal state."
+        },
+        {
+          "operationId": "4-E1",
+          "name": "Mark Task Completed",
+          "purpose": "Plumber marks work as done and submits a completion report. Triggers payment flow.",
+          "stateVariables": [
+            "Compl : Map<id, ComplaintRecord>"
+          ],
+          "precondition": "The complaint must be in UNDER_EXEC state.",
+          "postcondition": "Complaint state advances to PAYMENT_PENDING."
+        },
+        {
+          "operationId": "4-E2",
+          "name": "Make Payment",
+          "purpose": "Customer makes payment. Complaint lifecycle reaches terminal DONE state.",
+          "stateVariables": [
+            "Compl : Map<id, ComplaintRecord>"
+          ],
+          "precondition": "The complaint must be in PAYMENT_PENDING state.",
+          "postcondition": "Complaint state becomes DONE — primary terminal state."
+        },
+        {
+          "operationId": "4-F",
+          "name": "Submit Feedback",
+          "purpose": "Customer submits a star rating and text feedback after complaint resolution.",
+          "stateVariables": [
+            "Compl : Map<id, ComplaintRecord>"
+          ],
+          "precondition": "The complaint must be in DONE state.",
+          "postcondition": "Feedback is recorded. Complaint state remains DONE — unchanged."
+        }
+      ]
+    }
+  ]
+}
