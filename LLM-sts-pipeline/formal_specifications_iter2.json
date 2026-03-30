@@ -1,0 +1,173 @@
+[
+  {
+    "operationId": "1-A",
+    "operationName": "Signup",
+    "LABEL": "SIGNUP_OK",
+    "lifted_nl": "whenever signup(u,p) is called, it must hold that u ∉ dom(R); always after signup(u,p) succeeds, R becomes R ∪ {u → hash(p)}",
+    "Precondition": "u ∉ dom(R)",
+    "Function": "signup(u:Username, p:Password) -> Unit [201 Created]",
+    "Postcondition": "R'=R ∪ {u → hash(p)} AND T'=T AND Qual'=Qual AND Compl'=Compl"
+  },
+  {
+    "operationId": "1-B",
+    "operationName": "Login",
+    "LABEL": "LOGIN_OK",
+    "lifted_nl": "whenever login(u,p) is called, it must hold that hash(p) = R(u) ∧ u ∉ dom(T)",
+    "Precondition": "hash(p) = R(u) ∧ u ∉ dom(T)",
+    "Function": "login(u:Username, p:Password) -> Token [200 OK]",
+    "Postcondition": "T'=T ∪ {tok → u} AND R'=R AND Qual'=Qual AND Compl'=Compl"
+  },
+  {
+    "operationId": "2-k",
+    "operationName": "Submit Onboarding Step k",
+    "LABEL": "ONBOARDING_STEP_K_OK",
+    "lifted_nl": "whenever submit_onboarding_step_k(p) is called, it must hold that p's onboarding state = STEP_k and p's session token is in dom(T); always after submit_onboarding_step_k(p) succeeds, p's onboarding state becomes STEP_k+1; after Step 6, state becomes ONBOARD_DONE",
+    "Precondition": "Qual(p) = STEP_k ∧ p's session token ∈ dom(T)",
+    "Function": "submit_onboarding_step_k(p:PlumberId) -> Unit [200 OK]",
+    "Postcondition": "Qual'=Qual ∪ {p → (k=6 ? ONBOARD_DONE : STEP_(k+1))} AND T'=T AND R'=R AND Compl'=Compl"
+  },
+  {
+    "operationId": "3-A",
+    "operationName": "Initial Qualification Application",
+    "LABEL": "INITIAL_QUALIFICATION_APPLICATION_OK",
+    "lifted_nl": "whenever Initial Qualification Application(p) is called, it must hold that QualState(p) = Q_INIT and always after Initial Qualification Application(p) succeeds, QualState(p) becomes UNDER_EXAM",
+    "Precondition": "QualState(p) = Q_INIT",
+    "Function": "initialQualificationApplication(p:plumberId) -> Unit [201 Created]",
+    "Postcondition": "C'=C AND P'=P AND M'=M AND T'=T AND Qual'=Qual union {p|->UNDER_EXAM} AND Compl'=Compl"
+  },
+  {
+    "operationId": "3-B1",
+    "operationName": "Semi-Qualify (Send to Training)",
+    "LABEL": "SEMI_QUALIFY_OK",
+    "lifted_nl": "whenever Semi-Qualify(p) is called, it must hold that QualState(p) = UNDER_EXAM and always after Semi-Qualify(p) succeeds, QualState becomes TRAINING",
+    "Precondition": "QualState(p) = UNDER_EXAM",
+    "Function": "semiQualify(p:plumberId) -> Unit [200 OK]",
+    "Postcondition": "C'=C AND P'=P AND M'=M AND T'=T AND Qual'=Qual union {p|->TRAINING} AND Compl'=Compl"
+  },
+  {
+    "operationId": "3-B2",
+    "operationName": "Fully Qualify (Activate)",
+    "LABEL": "FULLY_QUALIFY_OK",
+    "lifted_nl": "whenever Fully-Qualify(p) is called, QualState must hold that QualState = UNDER_EXAM and always after Fully-Qualify(p) succeeds, QualState becomes ACTIVE",
+    "Precondition": "QualState(p) = UNDER_EXAM",
+    "Function": "fullyQualify(p:plumberId) -> Unit [200 OK]",
+    "Postcondition": "C'=C AND P'=P AND M'=M AND T'=T AND Qual'=Qual union {p|->ACTIVE} AND Compl'=Compl"
+  },
+  {
+    "operationId": "3-B3",
+    "operationName": "Disqualify (Reject)",
+    "LABEL": "DISQUALIFY_OK",
+    "lifted_nl": "whenever Disqualify(p) is called, it must hold that QualState(p) = UNDER_EXAM; always after Disqualify(p) succeeds, QualState(p) becomes REJECTED",
+    "Precondition": "Qual(p) = UNDER_EXAM",
+    "Function": "Disqualify(p:plumberId) -> Unit [200 OK]",
+    "Postcondition": "Qual'=Qual [[p:=REJECTED]] AND T'=T AND C'=C AND Compl'=Compl"
+  },
+  {
+    "operationId": "3-C1",
+    "operationName": "Suspend Plumber",
+    "LABEL": "SUSPEND_PLUMBER_OK",
+    "lifted_nl": "whenever SuspendPlumber(p) is called, it must hold that QualState(p) = ACTIVE; always after SuspendPlumber(p) succeeds, QualState becomes SUSPENDED",
+    "Precondition": "Qual(p) = ACTIVE",
+    "Function": "SuspendPlumber(p:plumberId) -> Unit [200 OK]",
+    "Postcondition": "Qual'=Qual [[p:=SUSPENDED]] AND T'=T AND C'=C AND Compl'=Compl"
+  },
+  {
+    "operationId": "3-C2",
+    "operationName": "Reinstate Plumber",
+    "LABEL": "REINSTATE_PLUMBER_OK",
+    "lifted_nl": "whenever ReinstatePlumber(p) is called, it must hold that QualState = SUSPENDED; always after ReinstatePlumber(p) succeeds, QualState becomes ACTIVE",
+    "Precondition": "Qual(p) = SUSPENDED",
+    "Function": "ReinstatePlumber(p:plumberId) -> Unit [200 OK]",
+    "Postcondition": "Qual'=Qual [[p:=ACTIVE]] AND T'=T AND C'=C AND Compl'=Compl"
+  },
+  {
+    "operationId": "4-A",
+    "operationName": "Raise Complaint",
+    "LABEL": "RAISE_COMPLAINT_OK",
+    "lifted_nl": "always after RaiseComplaint() succeeds, Compl is added to ComplaintRecord with state RAISED",
+    "Precondition": "true",
+    "Function": "RaiseComplaint() -> Unit [201 Created]",
+    "Postcondition": "C'=C AND P'=P AND M'=M AND T'=T AND Qual'=Qual AND Compl'=Compl union {complId|->ComplaintRecord(state=RAISED)}"
+  },
+  {
+    "operationId": "4-B",
+    "operationName": "Assign Plumber to Complaint",
+    "LABEL": "ASSIGN_PLUMBER_OK",
+    "lifted_nl": "whenever AssignPlumberToComplaint() is called, it must hold that ComplaintRecord.state = RAISED and Qual(plumber) = ACTIVE and after succeeds, Compl[complId].plumber becomes p and Compl[complId].state becomes ASSIGNED",
+    "Precondition": "Compl[complId].state = RAISED AND Qual[plumber] = ACTIVE",
+    "Function": "AssignPlumberToComplaint(complId:ComplaintId, plumber:PlumberId) -> Unit [200 OK]",
+    "Postcondition": "C'=C AND P'=P AND M'=M AND T'=T AND Qual'=Qual AND Compl'=Compl union {complId|->ComplaintRecord(plumber=p, state=ASSIGNED)}"
+  },
+  {
+    "operationId": "4-C1",
+    "operationName": "Plumber Accepts Assignment",
+    "LABEL": "PLUMBER_ACCEPTS_ASSIGNMENT_OK",
+    "lifted_nl": "whenever PlumberAcceptsAssignment(p, complId) is called, it must hold that Compl[complId].state = ASSIGNED and Compl[complId].plumber = p and after succeeds, Compl[complId].state becomes UNDER_EXAM_C",
+    "Precondition": "Compl[complId].state = ASSIGNED AND Compl[complId].plumber = p",
+    "Function": "PlumberAcceptsAssignment(p:PlumberId, complId:ComplaintId) -> Unit [200 OK]",
+    "Postcondition": "C'=C AND P'=P AND M'=M AND T'=T AND Qual'=Qual AND Compl'=Compl union {complId|->ComplaintRecord(state=UNDER_EXAM_C)}"
+  },
+  {
+    "operationId": "4-C2",
+    "operationName": "Plumber Rejects Assignment",
+    "LABEL": "PLUMBER_REJECTS_ASSIGNMENT_OK",
+    "lifted_nl": "whenever PlumberRejectsAssignment(p,complaint) is called, it must hold that ComplaintRecord[complaint].state = ASSIGNED and ComplaintRecord[complaint].plumber = p; always after PlumberRejectsAssignment(p,complaint) succeeds, ComplaintRecord[complaint].state becomes RAISED and ComplaintRecord[complaint].plumber becomes null",
+    "Precondition": "Compl[complaint].state = ASSIGNED AND Compl[complaint].plumber = p",
+    "Function": "PlumberRejectsAssignment(p:Plumber, complaint:Complaint) -> Unit [200 OK]",
+    "Postcondition": "Compl'=Compl union {complaint|->ComplaintRecord[complaint] with state=RAISED and plumber=null} AND C'=C AND T'=T AND Qual'=Qual"
+  },
+  {
+    "operationId": "4-D1",
+    "operationName": "Raise Quotation",
+    "LABEL": "RAISE_QUOTATION_OK",
+    "lifted_nl": "whenever RaiseQuotation(complaint) is called, it must hold that ComplaintRecord[complaint].state = UNDER_EXAM_C; always after RaiseQuotation(c,p,m) succeeds, ComplaintRecord becomes ComplaintRecord ∪ {quotation ↦ items, state ↦ QUOTATION_RAISED}",
+    "Precondition": "Compl[complaint].state = UNDER_EXAM_C",
+    "Function": "RaiseQuotation(complaint:Complaint, items:List, p:Plumber) -> Unit [201 Created]",
+    "Postcondition": "Compl'=Compl union {complaint|->ComplaintRecord[complaint] with quotation=items and state=QUOTATION_RAISED} AND C'=C AND T'=T AND Qual'=Qual"
+  },
+  {
+    "operationId": "4-D2",
+    "operationName": "Approve Quotation",
+    "LABEL": "APPROVE_QUOTATION_OK",
+    "lifted_nl": "whenever ApproveQuotation(c,p,m) is called, it must hold that ComplaintRecord.state = QUOTATION_RAISED; always after ApproveQuotation(c,p,m) succeeds, ComplaintRecord.state becomes UNDER_EXEC",
+    "Precondition": "Compl[complaint].state = QUOTATION_RAISED",
+    "Function": "ApproveQuotation(complaint:Complaint) -> Unit [200 OK]",
+    "Postcondition": "Compl'=Compl union {complaint|->Compl[complaint] with state=UNDER_EXEC} AND C'=C AND T'=T AND Qual'=Qual"
+  },
+  {
+    "operationId": "4-D3",
+    "operationName": "Reject Quotation / Abandon",
+    "LABEL": "REJECT_QUOTATION_ABANDON_OK",
+    "lifted_nl": "whenever RejectQuotationAbandon() is called, it must hold that QualState = QUOTATION_RAISED; always after RejectQuotationAbandon() succeeds, QualState becomes ABANDONED",
+    "Precondition": "Compl.state = QUOTATION_RAISED",
+    "Function": "RejectQuotationAbandon() -> Unit [200 OK]",
+    "Postcondition": "C'=C AND T'=T AND Qual'=Qual AND Compl'=Compl union {complaintId|->ABANDONED}"
+  },
+  {
+    "operationId": "4-E1",
+    "operationName": "Mark Task Completed",
+    "LABEL": "MARK_TASK_COMPLETED_OK",
+    "lifted_nl": "whenever MarkTaskCompleted() is called, it must hold that QualState = UNDER_EXEC; always after Mark Task Completed, ComplaintRecord becomes PAYMENT_PENDING",
+    "Precondition": "Compl.state = UNDER_EXEC",
+    "Function": "MarkTaskCompleted() -> Unit [200 OK]",
+    "Postcondition": "C'=C AND T'=T AND Qual'=Qual AND Compl'=Compl union {complaintId|->PAYMENT_PENDING}"
+  },
+  {
+    "operationId": "4-E2",
+    "operationName": "Make Payment",
+    "LABEL": "MAKE_PAYMENT_OK",
+    "lifted_nl": "whenever Make Payment is called, it must hold that ComplaintRecord = PAYMENT_PENDING; always after Make Payment succeeds, ComplaintRecord becomes DONE",
+    "Precondition": "Compl.state = PAYMENT_PENDING",
+    "Function": "MakePayment() -> Unit [200 OK]",
+    "Postcondition": "C'=C AND T'=T AND Qual'=Qual AND Compl'=Compl union {complaintId|->DONE}"
+  },
+  {
+    "operationId": "4-F",
+    "operationName": "Submit Feedback",
+    "LABEL": "SUBMIT_FEEDBACK_OK",
+    "lifted_nl": "whenever SubmitFeedback(c,p) is called, it must hold that ComplaintRecord(p) = 'DONE' and always after SubmitFeedback(c,p) succeeds, Compl(p) is added to map ComplaintRecord and ComplaintRecord(p) becomes ComplaintRecord(p)",
+    "Precondition": "Compl(p).state = DONE",
+    "Function": "SubmitFeedback(c:Complaint, p:Plumber) -> Unit [201 Created]",
+    "Postcondition": "C'=C AND P'=P AND M'=M AND Compl'=Compl"
+  }
+]
