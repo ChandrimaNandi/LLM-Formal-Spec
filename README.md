@@ -27,8 +27,8 @@ Architecture
 
 ### API Keys
 
-- **Groq API Key** — Get it free from [console.groq.com](https://console.groq.com)
-  - Models available: `llama-3.3-70b-versatile`, `llama-3.1-8b-instant`
+- **LLM Provider API Key** — Required for accessing the language models used in the pipeline
+  - The pipeline uses various LLM models for specification generation and summarization
 
 ### Input Files
 
@@ -47,7 +47,6 @@ cd /path/to/LLM-Formal-Spec-main
 ### Step 2: Install Dependencies
 
 ```bash
-pip install --upgrade groq
 pip install sentence-transformers
 pip install bert-score
 pip install pandas
@@ -56,23 +55,25 @@ pip install pandas
 Or install everything at once:
 
 ```bash
-pip install groq sentence-transformers bert-score pandas
+pip install sentence-transformers bert-score pandas
 ```
 
 ### Step 3: Set Environment Variables
 
-Create a `.env` file in the `LLM-sts-pipeline` directory (or set your shell variables):
+Create a `.env` file in the `LLM-sts-pipeline` directory (or set your shell variables) with your LLM provider credentials:
 
 ```bash
-export GROQ_API_KEY="your-groq-api-key-here"
+export LLM_API_KEY="your-api-key-here"
 ```
 
 Or set it in Python before running:
 
 ```python
 import os
-os.environ['GROQ_API_KEY'] = 'your-groq-api-key-here'
+os.environ['LLM_API_KEY'] = 'your-api-key-here'
 ```
+
+Refer to the notebook's configuration section for specific provider setup instructions.
 
 ### Step 4: Prepare Your Input Data
 
@@ -115,8 +116,8 @@ import os
 import sys
 sys.path.append('./LLM-sts-pipeline')
 
-# Set your Groq API key
-os.environ['GROQ_API_KEY'] = 'your-api-key'
+# Set your LLM provider API key
+os.environ['LLM_API_KEY'] = 'your-api-key'
 
 # Import and run the pipeline code
 # (See the notebook for the full implementation)
