@@ -1,0 +1,10 @@
+[
+  {
+    "iteration": 1,
+    "score": 0.896,
+    "passed": 20,
+    "failed": 1,
+    "contradictions": 0,
+    "feedback": "1 op(s) below threshold (0.85): ['4-F']"
+  }
+]

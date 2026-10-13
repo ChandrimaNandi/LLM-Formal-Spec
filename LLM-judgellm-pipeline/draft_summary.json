@@ -1,0 +1,345 @@
+{
+  "sections": [
+    {
+      "sectionId": 1,
+      "sectionTitle": "Authentication",
+      "operations": [
+        {
+          "operationId": "1-A",
+          "name": "Signup",
+          "purpose": "Registers a new user with a specified role and password.",
+          "stateVariables": [
+            "C",
+            "P",
+            "M",
+            "T",
+            "Qual",
+            "Compl",
+            "roleMap"
+          ],
+          "precondition": "The role is Customer, Plumber, or Manager, and the username is not already registered for that role.",
+          "postcondition": "Adds the user to the role's user map with the hashed password."
+        },
+        {
+          "operationId": "1-B",
+          "name": "Login",
+          "purpose": "Authenticates a user and creates a session token.",
+          "stateVariables": [
+            "T",
+            "C",
+            "P",
+            "M",
+            "Qual",
+            "Compl"
+          ],
+          "precondition": "The username is registered under some role, the password matches the stored hash, and the user is not already logged in.",
+          "postcondition": "Creates a new session token mapping to the user."
+        },
+        {
+          "operationId": "1-C",
+          "name": "Logout",
+          "purpose": "Terminates a user session.",
+          "stateVariables": [
+            "T",
+            "C",
+            "P",
+            "M",
+            "Qual",
+            "Compl"
+          ],
+          "precondition": "The token is currently active.",
+          "postcondition": "Removes the token from the session map."
+        },
+        {
+          "operationId": "1-A",
+          "name": "Signup",
+          "purpose": "Registers a new user with a specified role and password.",
+          "stateVariables": [
+            "C",
+            "P",
+            "M",
+            "T",
+            "Qual",
+            "Compl",
+            "roleMap"
+          ],
+          "precondition": "The role is Customer, Plumber, or Manager, and the username is not already registered for that role.",
+          "postcondition": "Adds the user to the appropriate role map with the hashed password."
+        }
+      ]
+    },
+    {
+      "sectionId": 2,
+      "sectionTitle": "Plumber Onboarding",
+      "operations": [
+        {
+          "operationId": "2-k",
+          "name": "Submit Onboarding Step k (k = 1..6)",
+          "purpose": "Advances a plumber through onboarding steps.",
+          "stateVariables": [
+            "Qual",
+            "C",
+            "P",
+            "M",
+            "T",
+            "Compl"
+          ],
+          "precondition": "k is between 1 and 6, the plumber's current qualification state is STEP_k, and the plumber has an active session token.",
+          "postcondition": "Moves the plumber's qualification state to the next step or marks onboarding as done."
+        }
+      ]
+    },
+    {
+      "sectionId": 3,
+      "sectionTitle": "Plumber Qualification",
+      "operations": [
+        {
+          "operationId": "3-A",
+          "name": "Initial Qualification Application",
+          "purpose": "Submits an initial qualification application for a plumber.",
+          "stateVariables": [
+            "Qual",
+            "C",
+            "P",
+            "M",
+            "T",
+            "Compl"
+          ],
+          "precondition": "The plumber's current qualification state is Q_INIT.",
+          "postcondition": "Changes the plumber's qualification state to UNDER_EXAM."
+        },
+        {
+          "operationId": "3-B1",
+          "name": "Semi-Qualify (Send to Training)",
+          "purpose": "Sends a plumber to training after examination.",
+          "stateVariables": [
+            "Qual",
+            "C",
+            "P",
+            "M",
+            "T",
+            "Compl"
+          ],
+          "precondition": "The plumber's current qualification state is UNDER_EXAM.",
+          "postcondition": "Updates the plumber's qualification state to TRAINING."
+        },
+        {
+          "operationId": "3-B2",
+          "name": "Fully Qualify (Activate)",
+          "purpose": "Activates a plumber after full qualification.",
+          "stateVariables": [
+            "Qual",
+            "C",
+            "T",
+            "Compl"
+          ],
+          "precondition": "The plumber's current qualification state is UNDER_EXAM.",
+          "postcondition": "Sets the plumber's qualification state to ACTIVE."
+        },
+        {
+          "operationId": "3-B3",
+          "name": "Disqualify (Reject)",
+          "purpose": "Rejects a plumber's qualification application.",
+          "stateVariables": [
+            "Qual",
+            "C",
+            "T",
+            "Compl"
+          ],
+          "precondition": "The plumber's current qualification state is UNDER_EXAM.",
+          "postcondition": "Sets the plumber's qualification state to REJECTED."
+        },
+        {
+          "operationId": "3-C1",
+          "name": "Suspend Plumber",
+          "purpose": "Suspends an active plumber.",
+          "stateVariables": [
+            "Qual",
+            "C",
+            "T",
+            "Compl"
+          ],
+          "precondition": "The plumber's current qualification state is ACTIVE.",
+          "postcondition": "Changes the plumber's qualification state to SUSPENDED."
+        },
+        {
+          "operationId": "3-C2",
+          "name": "Reinstate Plumber",
+          "purpose": "Reinstates a suspended plumber.",
+          "stateVariables": [
+            "Qual",
+            "C",
+            "T",
+            "P",
+            "Compl"
+          ],
+          "precondition": "The plumber's current qualification state is SUSPENDED.",
+          "postcondition": "Changes the plumber's qualification state to ACTIVE."
+        },
+        {
+          "operationId": "3-C3",
+          "name": "Delete Plumber Account",
+          "purpose": "Deletes a plumber's account.",
+          "stateVariables": [
+            "Qual",
+            "P",
+            "T",
+            "C",
+            "Compl"
+          ],
+          "precondition": "The plumber exists in the qualification map.",
+          "postcondition": "Removes the plumber from the qualification and user maps."
+        }
+      ]
+    },
+    {
+      "sectionId": 4,
+      "sectionTitle": "Complaint Lifecycle",
+      "operations": [
+        {
+          "operationId": "4-A",
+          "name": "Raise Complaint",
+          "purpose": "Raises a new complaint by a customer.",
+          "stateVariables": [
+            "Compl",
+            "T",
+            "C",
+            "P",
+            "Qual"
+          ],
+          "precondition": "The customer is logged in and currently idle.",
+          "postcondition": "Creates a new complaint record with state RAISED."
+        },
+        {
+          "operationId": "4-B",
+          "name": "Assign Plumber to Complaint",
+          "purpose": "Assigns an active plumber to a raised complaint.",
+          "stateVariables": [
+            "Compl",
+            "C",
+            "T",
+            "Qual"
+          ],
+          "precondition": "The complaint exists, is in RAISED state, and the plumber exists and is ACTIVE.",
+          "postcondition": "Assigns the plumber to the complaint and sets state to ASSIGNED."
+        },
+        {
+          "operationId": "4-C1",
+          "name": "Plumber Accepts Assignment",
+          "purpose": "Plumber accepts an assigned complaint.",
+          "stateVariables": [
+            "Compl",
+            "C",
+            "T",
+            "Qual"
+          ],
+          "precondition": "The complaint is ASSIGNED to the plumber.",
+          "postcondition": "Sets the complaint state to UNDER_EXAM_C."
+        },
+        {
+          "operationId": "4-C2",
+          "name": "Plumber Rejects Assignment",
+          "purpose": "Plumber rejects an assigned complaint.",
+          "stateVariables": [
+            "Compl",
+            "C",
+            "T",
+            "Qual"
+          ],
+          "precondition": "The complaint is ASSIGNED to the plumber.",
+          "postcondition": "Clears the plumber assignment and sets state back to RAISED."
+        },
+        {
+          "operationId": "4-D1",
+          "name": "Raise Quotation",
+          "purpose": "Raises a quotation for a complaint.",
+          "stateVariables": [
+            "Compl",
+            "C",
+            "P",
+            "M",
+            "T",
+            "Qual"
+          ],
+          "precondition": "The complaint is in UNDER_EXAM_C state.",
+          "postcondition": "Adds quotation items to the complaint and sets state to QUOTATION_RAISED."
+        },
+        {
+          "operationId": "4-D2",
+          "name": "Approve Quotation",
+          "purpose": "Approves a quotation for a complaint.",
+          "stateVariables": [
+            "Compl",
+            "C",
+            "P",
+            "M",
+            "T",
+            "Qual"
+          ],
+          "precondition": "The complaint is in QUOTATION_RAISED state.",
+          "postcondition": "Sets the complaint state to UNDER_EXEC."
+        },
+        {
+          "operationId": "4-D3",
+          "name": "Reject Quotation / Abandon",
+          "purpose": "Rejects a quotation and abandons the complaint.",
+          "stateVariables": [
+            "Compl",
+            "C",
+            "P",
+            "M",
+            "T",
+            "Qual"
+          ],
+          "precondition": "The complaint is in QUOTATION_RAISED state.",
+          "postcondition": "Sets the complaint state to ABANDONED."
+        },
+        {
+          "operationId": "4-E1",
+          "name": "Mark Task Completed",
+          "purpose": "Marks a complaint's task as completed.",
+          "stateVariables": [
+            "Compl",
+            "C",
+            "P",
+            "M",
+            "T",
+            "Qual"
+          ],
+          "precondition": "The complaint is in UNDER_EXEC state.",
+          "postcondition": "Sets the complaint state to PAYMENT_PENDING."
+        },
+        {
+          "operationId": "4-E2",
+          "name": "Make Payment",
+          "purpose": "Processes payment for a completed complaint.",
+          "stateVariables": [
+            "Compl",
+            "C",
+            "P",
+            "M",
+            "T",
+            "Qual"
+          ],
+          "precondition": "The complaint is in PAYMENT_PENDING state.",
+          "postcondition": "Sets the complaint state to DONE."
+        },
+        {
+          "operationId": "4-F",
+          "name": "Submit Feedback",
+          "purpose": "Submits feedback for a completed complaint.",
+          "stateVariables": [
+            "Compl",
+            "C",
+            "P",
+            "M",
+            "T",
+            "Qual"
+          ],
+          "precondition": "The complaint is in DONE state.",
+          "postcondition": "Adds feedback to the complaint record."
+        }
+      ]
+    }
+  ]
+}

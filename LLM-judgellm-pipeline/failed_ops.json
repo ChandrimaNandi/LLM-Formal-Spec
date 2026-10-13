@@ -1,0 +1,18 @@
+{
+  "similarity_threshold": 0.85,
+  "failed_operation_ids": [
+    "4-F"
+  ],
+  "operations": [
+    {
+      "operationId": "4-F",
+      "name": "Submit Feedback",
+      "purpose": "Customer submits a star rating and text feedback after complaint resolution.",
+      "stateVariables": [
+        "Compl : Map<id, ComplaintRecord>"
+      ],
+      "precondition": "The complaint must be in DONE state.",
+      "postcondition": "Feedback is recorded. Complaint state remains DONE \u2014 unchanged."
+    }
+  ]
+}

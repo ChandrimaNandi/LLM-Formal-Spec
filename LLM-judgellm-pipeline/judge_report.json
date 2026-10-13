@@ -1,0 +1,594 @@
+{
+  "overall_score": 0.896,
+  "operation_scores": [
+    {
+      "operationId": "1-A",
+      "name": "Signup",
+      "score": 0.855,
+      "status": "PASS",
+      "dimension_scores": {
+        "precondition_accuracy": 0.9,
+        "postcondition_accuracy": 0.9,
+        "state_variables_accuracy": 0.6,
+        "purpose_accuracy": 0.9
+      },
+      "precondition_score": 0.9,
+      "postcondition_score": 0.9,
+      "state_vars_score": 0.6,
+      "purpose_score": 0.9,
+      "contradiction_detected": false,
+      "contradiction_explanation": "",
+      "issues": [
+        "Includes unnecessary state variables (T, Qual, Compl) not involved in Signup.",
+        "Does not explicitly reference the target role map R in stateVariables."
+      ],
+      "feedback": "Remove extraneous variables and specify R as the target role map used for credential storage.",
+      "ground_truth_text": "Signup | Pre: The username u must not already exist in the target role map R. | Post: The credential map R now contains an entry mapping u to hashed password p.",
+      "draft_text": "Signup | Pre: The role is Customer, Plumber, or Manager, and the username is not already registered for that role. | Post: Adds the user to the appropriate role map with the hashed password.",
+      "sts_score": 0.855,
+      "nli_score": 0.855,
+      "nli_label": "entailment"
+    },
+    {
+      "operationId": "1-B",
+      "name": "Login",
+      "score": 0.855,
+      "status": "PASS",
+      "dimension_scores": {
+        "precondition_accuracy": 0.9,
+        "postcondition_accuracy": 0.9,
+        "state_variables_accuracy": 0.6,
+        "purpose_accuracy": 0.9
+      },
+      "precondition_score": 0.9,
+      "postcondition_score": 0.9,
+      "state_vars_score": 0.6,
+      "purpose_score": 0.9,
+      "contradiction_detected": false,
+      "contradiction_explanation": "",
+      "issues": [
+        "Includes unnecessary state variables (Qual, Compl) not involved in Login.",
+        "Does not explicitly reference the role map R in stateVariables."
+      ],
+      "feedback": "Remove extraneous variables and specify R as the role map used for credential lookup.",
+      "ground_truth_text": "Login | Pre: The password p must match the stored credential for u, AND u must not already have an active session token. | Post: A new token is issued and recorded in T, mapping token to username u.",
+      "draft_text": "Login | Pre: The username is registered under some role, the password matches the stored hash, and the user is not already logged in. | Post: Creates a new session token mapping to the user.",
+      "sts_score": 0.855,
+      "nli_score": 0.855,
+      "nli_label": "entailment"
+    },
+    {
+      "operationId": "1-C",
+      "name": "Logout",
+      "score": 0.855,
+      "status": "PASS",
+      "dimension_scores": {
+        "precondition_accuracy": 0.9,
+        "postcondition_accuracy": 0.9,
+        "state_variables_accuracy": 0.6,
+        "purpose_accuracy": 0.9
+      },
+      "precondition_score": 0.9,
+      "postcondition_score": 0.9,
+      "state_vars_score": 0.6,
+      "purpose_score": 0.9,
+      "contradiction_detected": false,
+      "contradiction_explanation": "",
+      "issues": [
+        "Includes unnecessary state variables (C, P, M, Qual, Compl) not involved in Logout.",
+        "Does not explicitly reference only the session map T."
+      ],
+      "feedback": "Remove extraneous variables; keep only T as the relevant state variable.",
+      "ground_truth_text": "Logout | Pre: The token must exist in the active session map T. | Post: The token is removed from T; the session is invalidated.",
+      "draft_text": "Logout | Pre: The token is currently active. | Post: Removes the token from the session map.",
+      "sts_score": 0.855,
+      "nli_score": 0.855,
+      "nli_label": "entailment"
+    },
+    {
+      "operationId": "2-k",
+      "name": "Submit Onboarding Step k (k = 1..6)",
+      "score": 0.925,
+      "status": "PASS",
+      "dimension_scores": {
+        "precondition_accuracy": 1.0,
+        "postcondition_accuracy": 1.0,
+        "state_variables_accuracy": 0.5,
+        "purpose_accuracy": 1.0
+      },
+      "precondition_score": 1.0,
+      "postcondition_score": 1.0,
+      "state_vars_score": 0.5,
+      "purpose_score": 1.0,
+      "contradiction_detected": false,
+      "contradiction_explanation": "",
+      "issues": [
+        "StateVariables list contains unrelated maps (C, P, M, Compl) that are not part of this operation."
+      ],
+      "feedback": "Remove C, P, M, and Compl from the StateVariables list; only Qual and T are relevant for this operation.",
+      "ground_truth_text": "Submit Onboarding Step k (k = 1..6) | Pre: The plumber's current onboarding state must be exactly STEP_k, and the session token must be active. | Post: The plumber's state advances to STEP_k+1. After Step 6, state becomes ONBOARD_DONE.",
+      "draft_text": "Submit Onboarding Step k (k = 1..6) | Pre: k is between 1 and 6, the plumber's current qualification state is STEP_k, and the plumber has an active session token. | Post: Moves the plumber's qualification state to the next step or marks onboarding as done.",
+      "sts_score": 0.925,
+      "nli_score": 0.925,
+      "nli_label": "entailment"
+    },
+    {
+      "operationId": "3-A",
+      "name": "Initial Qualification Application",
+      "score": 0.925,
+      "status": "PASS",
+      "dimension_scores": {
+        "precondition_accuracy": 1.0,
+        "postcondition_accuracy": 1.0,
+        "state_variables_accuracy": 0.5,
+        "purpose_accuracy": 1.0
+      },
+      "precondition_score": 1.0,
+      "postcondition_score": 1.0,
+      "state_vars_score": 0.5,
+      "purpose_score": 1.0,
+      "contradiction_detected": false,
+      "contradiction_explanation": "",
+      "issues": [
+        "StateVariables list includes unnecessary maps (C, P, M, T, Compl) that are not involved in this operation."
+      ],
+      "feedback": "Limit StateVariables to Qual only, as the operation only updates the plumber's qualification state.",
+      "ground_truth_text": "Initial Qualification Application | Pre: Plumber qualification state must be Q_INIT (not yet applied). | Post: Qualification state advances to UNDER_EXAM.",
+      "draft_text": "Initial Qualification Application | Pre: The plumber's current qualification state is Q_INIT. | Post: Changes the plumber's qualification state to UNDER_EXAM.",
+      "sts_score": 0.925,
+      "nli_score": 0.925,
+      "nli_label": "entailment"
+    },
+    {
+      "operationId": "3-B1",
+      "name": "Semi-Qualify (Send to Training)",
+      "score": 0.925,
+      "status": "PASS",
+      "dimension_scores": {
+        "precondition_accuracy": 1.0,
+        "postcondition_accuracy": 1.0,
+        "state_variables_accuracy": 0.5,
+        "purpose_accuracy": 1.0
+      },
+      "precondition_score": 1.0,
+      "postcondition_score": 1.0,
+      "state_vars_score": 0.5,
+      "purpose_score": 1.0,
+      "contradiction_detected": false,
+      "contradiction_explanation": "",
+      "issues": [
+        "StateVariables list contains extraneous maps (C, P, M, T, Compl) that are not relevant to this operation."
+      ],
+      "feedback": "Specify only Qual in StateVariables, as the operation solely updates the plumber's qualification state.",
+      "ground_truth_text": "Semi-Qualify (Send to Training) | Pre: Plumber must be in UNDER_EXAM state. | Post: Qualification state advances to TRAINING.",
+      "draft_text": "Semi-Qualify (Send to Training) | Pre: The plumber's current qualification state is UNDER_EXAM. | Post: Updates the plumber's qualification state to TRAINING.",
+      "sts_score": 0.925,
+      "nli_score": 0.925,
+      "nli_label": "entailment"
+    },
+    {
+      "operationId": "3-B2",
+      "name": "Fully Qualify (Activate)",
+      "score": 0.9325,
+      "status": "PASS",
+      "dimension_scores": {
+        "precondition_accuracy": 1.0,
+        "postcondition_accuracy": 1.0,
+        "state_variables_accuracy": 0.75,
+        "purpose_accuracy": 0.8
+      },
+      "precondition_score": 1.0,
+      "postcondition_score": 1.0,
+      "state_vars_score": 0.75,
+      "purpose_score": 0.8,
+      "contradiction_detected": false,
+      "contradiction_explanation": "",
+      "issues": [
+        "Includes unnecessary state variables (C, T, Compl) that are not part of the operation.",
+        "Purpose omits the manager role, which is essential to the operation."
+      ],
+      "feedback": "Remove the extraneous state variables from the specification and explicitly state that the manager performs the activation in the purpose.",
+      "ground_truth_text": "Fully Qualify (Activate) | Pre: Plumber must be in UNDER_EXAM state. | Post: Qualification state becomes ACTIVE.",
+      "draft_text": "Fully Qualify (Activate) | Pre: The plumber's current qualification state is UNDER_EXAM. | Post: Sets the plumber's qualification state to ACTIVE.",
+      "sts_score": 0.9325,
+      "nli_score": 0.9325,
+      "nli_label": "entailment"
+    },
+    {
+      "operationId": "3-B3",
+      "name": "Disqualify (Reject)",
+      "score": 0.9325,
+      "status": "PASS",
+      "dimension_scores": {
+        "precondition_accuracy": 1.0,
+        "postcondition_accuracy": 1.0,
+        "state_variables_accuracy": 0.75,
+        "purpose_accuracy": 0.8
+      },
+      "precondition_score": 1.0,
+      "postcondition_score": 1.0,
+      "state_vars_score": 0.75,
+      "purpose_score": 0.8,
+      "contradiction_detected": false,
+      "contradiction_explanation": "",
+      "issues": [
+        "Includes unnecessary state variables (C, T, Compl) that are not part of the operation.",
+        "Purpose omits the manager role, which is essential to the operation."
+      ],
+      "feedback": "Eliminate the unused state variables and clarify that the manager is the actor in the purpose.",
+      "ground_truth_text": "Disqualify (Reject) | Pre: Plumber must be in UNDER_EXAM state. | Post: Qualification state becomes REJECTED.",
+      "draft_text": "Disqualify (Reject) | Pre: The plumber's current qualification state is UNDER_EXAM. | Post: Sets the plumber's qualification state to REJECTED.",
+      "sts_score": 0.9325,
+      "nli_score": 0.9325,
+      "nli_label": "entailment"
+    },
+    {
+      "operationId": "3-C1",
+      "name": "Suspend Plumber",
+      "score": 0.9625,
+      "status": "PASS",
+      "dimension_scores": {
+        "precondition_accuracy": 1.0,
+        "postcondition_accuracy": 1.0,
+        "state_variables_accuracy": 0.75,
+        "purpose_accuracy": 1.0
+      },
+      "precondition_score": 1.0,
+      "postcondition_score": 1.0,
+      "state_vars_score": 0.75,
+      "purpose_score": 1.0,
+      "contradiction_detected": false,
+      "contradiction_explanation": "",
+      "issues": [
+        "Includes unnecessary state variables (C, T, Compl) that are not part of the operation."
+      ],
+      "feedback": "Remove the extraneous state variables from the specification to match the ground truth.",
+      "ground_truth_text": "Suspend Plumber | Pre: Plumber must currently be ACTIVE. | Post: Qualification state becomes SUSPENDED.",
+      "draft_text": "Suspend Plumber | Pre: The plumber's current qualification state is ACTIVE. | Post: Changes the plumber's qualification state to SUSPENDED.",
+      "sts_score": 0.9625,
+      "nli_score": 0.9625,
+      "nli_label": "entailment"
+    },
+    {
+      "operationId": "3-C2",
+      "name": "Reinstate Plumber",
+      "score": 0.94,
+      "status": "PASS",
+      "dimension_scores": {
+        "precondition_accuracy": 1.0,
+        "postcondition_accuracy": 1.0,
+        "state_variables_accuracy": 0.6,
+        "purpose_accuracy": 1.0
+      },
+      "precondition_score": 1.0,
+      "postcondition_score": 1.0,
+      "state_vars_score": 0.6,
+      "purpose_score": 1.0,
+      "contradiction_detected": false,
+      "contradiction_explanation": "",
+      "issues": [
+        "Includes unnecessary state variables (C, T, P, Compl) that are not part of this operation.",
+        "No explicit mention of the target role map R, though not required for this operation."
+      ],
+      "feedback": "Remove extraneous state variables; only list Qual as the relevant map.",
+      "ground_truth_text": "Reinstate Plumber | Pre: Plumber must currently be SUSPENDED. | Post: Qualification state returns to ACTIVE.",
+      "draft_text": "Reinstate Plumber | Pre: The plumber's current qualification state is SUSPENDED. | Post: Changes the plumber's qualification state to ACTIVE.",
+      "sts_score": 0.94,
+      "nli_score": 0.94,
+      "nli_label": "entailment"
+    },
+    {
+      "operationId": "3-C3",
+      "name": "Delete Plumber Account",
+      "score": 0.905,
+      "status": "PASS",
+      "dimension_scores": {
+        "precondition_accuracy": 1.0,
+        "postcondition_accuracy": 0.9,
+        "state_variables_accuracy": 0.6,
+        "purpose_accuracy": 1.0
+      },
+      "precondition_score": 1.0,
+      "postcondition_score": 0.9,
+      "state_vars_score": 0.6,
+      "purpose_score": 1.0,
+      "contradiction_detected": false,
+      "contradiction_explanation": "",
+      "issues": [
+        "Includes unnecessary state variables (T, C, Compl).",
+        "Postcondition refers to 'user maps' ambiguously; should explicitly state removal from Qual and P."
+      ],
+      "feedback": "Eliminate extraneous variables and clarify that the operation removes the plumber from Qual and P only.",
+      "ground_truth_text": "Delete Plumber Account | Pre: The plumber must exist in the qualification map. | Post: The plumber is removed from Qual and P.",
+      "draft_text": "Delete Plumber Account | Pre: The plumber exists in the qualification map. | Post: Removes the plumber from the qualification and user maps.",
+      "sts_score": 0.905,
+      "nli_score": 0.905,
+      "nli_label": "entailment"
+    },
+    {
+      "operationId": "4-A",
+      "name": "Raise Complaint",
+      "score": 0.94,
+      "status": "PASS",
+      "dimension_scores": {
+        "precondition_accuracy": 1.0,
+        "postcondition_accuracy": 1.0,
+        "state_variables_accuracy": 0.6,
+        "purpose_accuracy": 1.0
+      },
+      "precondition_score": 1.0,
+      "postcondition_score": 1.0,
+      "state_vars_score": 0.6,
+      "purpose_score": 1.0,
+      "contradiction_detected": false,
+      "contradiction_explanation": "",
+      "issues": [
+        "Includes unnecessary state variables (C, P, Qual) that are not involved in this operation."
+      ],
+      "feedback": "Limit the state variables to Compl and T, the only maps affected by raising a complaint.",
+      "ground_truth_text": "Raise Complaint | Pre: The customer must be authenticated and in CUSTOMER_IDLE state. | Post: A new ComplaintRecord is created with state RAISED and added to Compl.",
+      "draft_text": "Raise Complaint | Pre: The customer is logged in and currently idle. | Post: Creates a new complaint record with state RAISED.",
+      "sts_score": 0.94,
+      "nli_score": 0.94,
+      "nli_label": "entailment"
+    },
+    {
+      "operationId": "4-B",
+      "name": "Assign Plumber to Complaint",
+      "score": 0.8725,
+      "status": "PASS",
+      "dimension_scores": {
+        "precondition_accuracy": 0.9,
+        "postcondition_accuracy": 0.95,
+        "state_variables_accuracy": 0.8,
+        "purpose_accuracy": 0.7
+      },
+      "precondition_score": 0.9,
+      "postcondition_score": 0.95,
+      "state_vars_score": 0.8,
+      "purpose_score": 0.7,
+      "contradiction_detected": false,
+      "contradiction_explanation": "",
+      "issues": [
+        "Includes unnecessary state variables C and T; ground truth only requires Compl and Qual.",
+        "Purpose omits the Manager role and the notion of plumber availability."
+      ],
+      "feedback": "Remove extraneous state variables and explicitly mention that the Manager assigns an active, available plumber to a raised complaint.",
+      "ground_truth_text": "Assign Plumber to Complaint | Pre: The complaint must be in RAISED state. The plumber must be ACTIVE in the qualification map. | Post: The complaint's plumber field is set to plumberId and state advances to ASSIGNED.",
+      "draft_text": "Assign Plumber to Complaint | Pre: The complaint exists, is in RAISED state, and the plumber exists and is ACTIVE. | Post: Assigns the plumber to the complaint and sets state to ASSIGNED.",
+      "sts_score": 0.8725,
+      "nli_score": 0.8725,
+      "nli_label": "entailment"
+    },
+    {
+      "operationId": "4-C1",
+      "name": "Plumber Accepts Assignment",
+      "score": 0.905,
+      "status": "PASS",
+      "dimension_scores": {
+        "precondition_accuracy": 0.95,
+        "postcondition_accuracy": 0.95,
+        "state_variables_accuracy": 0.8,
+        "purpose_accuracy": 0.8
+      },
+      "precondition_score": 0.95,
+      "postcondition_score": 0.95,
+      "state_vars_score": 0.8,
+      "purpose_score": 0.8,
+      "contradiction_detected": false,
+      "contradiction_explanation": "",
+      "issues": [
+        "Includes unnecessary state variables C, T, and Qual; only Compl is needed.",
+        "Purpose lacks mention of proceeding to site examination."
+      ],
+      "feedback": "Eliminate unused state variables and add that the plumber proceeds to site examination after accepting the assignment.",
+      "ground_truth_text": "Plumber Accepts Assignment | Pre: The complaint must be in ASSIGNED state, and the calling plumber must be the one assigned. | Post: Complaint state advances to UNDER_EXAM_C.",
+      "draft_text": "Plumber Accepts Assignment | Pre: The complaint is ASSIGNED to the plumber. | Post: Sets the complaint state to UNDER_EXAM_C.",
+      "sts_score": 0.905,
+      "nli_score": 0.905,
+      "nli_label": "entailment"
+    },
+    {
+      "operationId": "4-C2",
+      "name": "Plumber Rejects Assignment",
+      "score": 0.905,
+      "status": "PASS",
+      "dimension_scores": {
+        "precondition_accuracy": 0.95,
+        "postcondition_accuracy": 0.95,
+        "state_variables_accuracy": 0.8,
+        "purpose_accuracy": 0.8
+      },
+      "precondition_score": 0.95,
+      "postcondition_score": 0.95,
+      "state_vars_score": 0.8,
+      "purpose_score": 0.8,
+      "contradiction_detected": false,
+      "contradiction_explanation": "",
+      "issues": [
+        "Includes unnecessary state variables C, T, and Qual; only Compl is required.",
+        "Purpose omits the detail that the complaint returns to RAISED for reassignment."
+      ],
+      "feedback": "Remove unused state variables and state that the complaint reverts to RAISED for reassignment after rejection.",
+      "ground_truth_text": "Plumber Rejects Assignment | Pre: The complaint must be in ASSIGNED state, and the calling plumber must be the one assigned. | Post: Complaint state reverts to RAISED; plumber field is cleared.",
+      "draft_text": "Plumber Rejects Assignment | Pre: The complaint is ASSIGNED to the plumber. | Post: Clears the plumber assignment and sets state back to RAISED.",
+      "sts_score": 0.905,
+      "nli_score": 0.905,
+      "nli_label": "entailment"
+    },
+    {
+      "operationId": "4-D1",
+      "name": "Raise Quotation",
+      "score": 0.895,
+      "status": "PASS",
+      "dimension_scores": {
+        "precondition_accuracy": 1.0,
+        "postcondition_accuracy": 1.0,
+        "state_variables_accuracy": 0.5,
+        "purpose_accuracy": 0.8
+      },
+      "precondition_score": 1.0,
+      "postcondition_score": 1.0,
+      "state_vars_score": 0.5,
+      "purpose_score": 0.8,
+      "contradiction_detected": false,
+      "contradiction_explanation": "",
+      "issues": [
+        "State variables list includes C, P, M, T, Qual which are not involved in this operation.",
+        "Purpose omits the plumber role context."
+      ],
+      "feedback": "Remove unused state variables from the list and explicitly state that the plumber submits the quotation.",
+      "ground_truth_text": "Raise Quotation | Pre: The complaint must be in UNDER_EXAM_C state. | Post: The complaint's quotation field is set to items, and state advances to QUOTATION_RAISED.",
+      "draft_text": "Raise Quotation | Pre: The complaint is in UNDER_EXAM_C state. | Post: Adds quotation items to the complaint and sets state to QUOTATION_RAISED.",
+      "sts_score": 0.895,
+      "nli_score": 0.895,
+      "nli_label": "entailment"
+    },
+    {
+      "operationId": "4-D2",
+      "name": "Approve Quotation",
+      "score": 0.88,
+      "status": "PASS",
+      "dimension_scores": {
+        "precondition_accuracy": 1.0,
+        "postcondition_accuracy": 1.0,
+        "state_variables_accuracy": 0.5,
+        "purpose_accuracy": 0.7
+      },
+      "precondition_score": 1.0,
+      "postcondition_score": 1.0,
+      "state_vars_score": 0.5,
+      "purpose_score": 0.7,
+      "contradiction_detected": false,
+      "contradiction_explanation": "",
+      "issues": [
+        "State variables list includes C, P, M, T, Qual which are not involved.",
+        "Purpose fails to mention the customer role and that work is authorized to begin."
+      ],
+      "feedback": "Limit state variables to Compl and add a statement that the customer authorises the work to start.",
+      "ground_truth_text": "Approve Quotation | Pre: The complaint must be in QUOTATION_RAISED state. | Post: Complaint state advances to UNDER_EXEC.",
+      "draft_text": "Approve Quotation | Pre: The complaint is in QUOTATION_RAISED state. | Post: Sets the complaint state to UNDER_EXEC.",
+      "sts_score": 0.88,
+      "nli_score": 0.88,
+      "nli_label": "entailment"
+    },
+    {
+      "operationId": "4-D3",
+      "name": "Reject Quotation / Abandon",
+      "score": 0.88,
+      "status": "PASS",
+      "dimension_scores": {
+        "precondition_accuracy": 1.0,
+        "postcondition_accuracy": 1.0,
+        "state_variables_accuracy": 0.5,
+        "purpose_accuracy": 0.7
+      },
+      "precondition_score": 1.0,
+      "postcondition_score": 1.0,
+      "state_vars_score": 0.5,
+      "purpose_score": 0.7,
+      "contradiction_detected": false,
+      "contradiction_explanation": "",
+      "issues": [
+        "State variables list includes C, P, M, T, Qual which are not involved.",
+        "Purpose does not specify the customer role responsible for rejection."
+      ],
+      "feedback": "Remove extraneous state variables and state that the customer rejects the quotation, leading to abandonment.",
+      "ground_truth_text": "Reject Quotation / Abandon | Pre: The complaint must be in QUOTATION_RAISED state. | Post: Complaint state becomes ABANDONED — a terminal state.",
+      "draft_text": "Reject Quotation / Abandon | Pre: The complaint is in QUOTATION_RAISED state. | Post: Sets the complaint state to ABANDONED.",
+      "sts_score": 0.88,
+      "nli_score": 0.88,
+      "nli_label": "entailment"
+    },
+    {
+      "operationId": "4-E1",
+      "name": "Mark Task Completed",
+      "score": 0.865,
+      "status": "PASS",
+      "dimension_scores": {
+        "precondition_accuracy": 1.0,
+        "postcondition_accuracy": 1.0,
+        "state_variables_accuracy": 0.5,
+        "purpose_accuracy": 0.6
+      },
+      "precondition_score": 1.0,
+      "postcondition_score": 1.0,
+      "state_vars_score": 0.5,
+      "purpose_score": 0.6,
+      "contradiction_detected": false,
+      "contradiction_explanation": "",
+      "issues": [
+        "Includes unnecessary state variables (C, P, M, T, Qual) that are not part of the operation.",
+        "Purpose omits the plumber role, completion report, and payment flow trigger."
+      ],
+      "feedback": "Remove extraneous state variables and explicitly state that the plumber marks the task as done, submits a completion report, and triggers the payment flow.",
+      "ground_truth_text": "Mark Task Completed | Pre: The complaint must be in UNDER_EXEC state. | Post: Complaint state advances to PAYMENT_PENDING.",
+      "draft_text": "Mark Task Completed | Pre: The complaint is in UNDER_EXEC state. | Post: Sets the complaint state to PAYMENT_PENDING.",
+      "sts_score": 0.865,
+      "nli_score": 0.865,
+      "nli_label": "entailment"
+    },
+    {
+      "operationId": "4-E2",
+      "name": "Make Payment",
+      "score": 0.865,
+      "status": "PASS",
+      "dimension_scores": {
+        "precondition_accuracy": 1.0,
+        "postcondition_accuracy": 1.0,
+        "state_variables_accuracy": 0.5,
+        "purpose_accuracy": 0.6
+      },
+      "precondition_score": 1.0,
+      "postcondition_score": 1.0,
+      "state_vars_score": 0.5,
+      "purpose_score": 0.6,
+      "contradiction_detected": false,
+      "contradiction_explanation": "",
+      "issues": [
+        "Includes unnecessary state variables (C, P, M, T, Qual).",
+        "Purpose fails to mention the customer actor and that DONE is the terminal state."
+      ],
+      "feedback": "Limit state variables to Compl and state the customer role and that the complaint reaches the terminal DONE state.",
+      "ground_truth_text": "Make Payment | Pre: The complaint must be in PAYMENT_PENDING state. | Post: Complaint state becomes DONE — primary terminal state.",
+      "draft_text": "Make Payment | Pre: The complaint is in PAYMENT_PENDING state. | Post: Sets the complaint state to DONE.",
+      "sts_score": 0.865,
+      "nli_score": 0.865,
+      "nli_label": "entailment"
+    },
+    {
+      "operationId": "4-F",
+      "name": "Submit Feedback",
+      "score": 0.795,
+      "status": "FAIL",
+      "dimension_scores": {
+        "precondition_accuracy": 1.0,
+        "postcondition_accuracy": 0.8,
+        "state_variables_accuracy": 0.5,
+        "purpose_accuracy": 0.6
+      },
+      "precondition_score": 1.0,
+      "postcondition_score": 0.8,
+      "state_vars_score": 0.5,
+      "purpose_score": 0.6,
+      "contradiction_detected": false,
+      "contradiction_explanation": "",
+      "issues": [
+        "Includes unnecessary state variables (C, P, M, T, Qual).",
+        "Purpose omits the customer actor, star rating, text feedback, and does not explicitly state that the complaint state remains DONE.",
+        "Postcondition does not explicitly mention that the complaint state is unchanged."
+      ],
+      "feedback": "Restrict state variables to Compl, mention the customer, star rating, text feedback, and explicitly state that the complaint state remains DONE.",
+      "ground_truth_text": "Submit Feedback | Pre: The complaint must be in DONE state. | Post: Feedback is recorded. Complaint state remains DONE — unchanged.",
+      "draft_text": "Submit Feedback | Pre: The complaint is in DONE state. | Post: Adds feedback to the complaint record.",
+      "sts_score": 0.795,
+      "nli_score": 0.795,
+      "nli_label": "entailment"
+    }
+  ],
+  "missing_operations": [],
+  "overall_feedback": "1 op(s) below threshold (0.85): ['4-F']",
+  "judge_type": "llm_judge",
+  "threshold": 0.85,
+  "iteration": 1
+}
